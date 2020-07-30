@@ -17,7 +17,10 @@ namespace L1Analysis
       nTfMuons = 0;
       tfMuonHwPt.clear();
       tfMuonHwPtDxy.clear();
+      tfMuonHwPtDxyEMTF.clear();
+      tfMuonHwPtDxyNN.clear();
       tfMuonHwDxy.clear();
+      tfMuonHwDxyNN.clear();
       tfMuonHwEta.clear();
       tfMuonHwPhi.clear();
       tfMuonGlobalPhi.clear();
@@ -38,7 +41,10 @@ namespace L1Analysis
     unsigned short int nTfMuons;
     std::vector<short int> tfMuonHwPt;
     std::vector<short int> tfMuonHwPtDxy;
+    std::vector<float> tfMuonHwPtDxyEMTF;
+    std::vector<float> tfMuonHwPtDxyNN;
     std::vector<short int> tfMuonHwDxy;
+    std::vector<float> tfMuonHwDxyNN;
     std::vector<short int> tfMuonHwEta;
     std::vector<short int> tfMuonHwPhi;
     std::vector<short int> tfMuonGlobalPhi;

@@ -254,6 +254,13 @@ void PtAssignmentEngineDxy::preprocessing_dxy(const EMTFTrack& track, emtf::Feat
     x_dtheta[5] = calc_delta(x_theta_emtf[2], x_theta_emtf[3]);
 
     // Pack the 23 features + 13 zeros used for padding
+    std::cout << "NN input: " << x_dphi[0] << " " << x_dphi[1] << " " << x_dphi[2] << " " << x_dphi[3] << " " << x_dphi[4] << " " << x_dphi[5] << " " <<
+                                 x_dtheta[0] << " " << x_dtheta[1] << " " << x_dtheta[2] << " " << x_dtheta[3] << " " << x_dtheta[4] << " " << x_dtheta[5] << " " <<
+                                 x_bend_emtf[0] << " " << x_bend_emtf[1] << " " << x_bend_emtf[2] << " " << x_bend_emtf[3] << " " << x_fr_emtf[0] << " " << x_trk_theta[0] << " " <<
+                                 x_me11ring[0] << " " << x_rpcbit[0] << " " << x_rpcbit[1] << " " << x_rpcbit[2] << " " << x_rpcbit[3] << " " << 0 << " " <<
+                                 0 << " " << 0 << " " << 0 << " " << 0 << " " << 0 << " " << 0 << " " <<
+                                 0 << " " << 0 << " " << 0 << " " << 0 << " " << 0 << " " << 0 << std::endl;
+
     feature = {{
       x_dphi     [0], x_dphi     [1], x_dphi     [2], x_dphi     [3], x_dphi     [4], x_dphi     [5],
       x_dtheta   [0], x_dtheta   [1], x_dtheta   [2], x_dtheta   [3], x_dtheta   [4], x_dtheta   [5],
@@ -346,9 +353,9 @@ void PtAssignmentEngineDxy::preprocessing_dxy(const EMTFTrack& track, emtf::Feat
       }
     }
 
-    if (!(track_mode == 11 || track_mode == 13 || track_mode == 14 || track_mode == 15)) {
-      demote = true;
-    }
+    // if (!(track_mode == 11 || track_mode == 13 || track_mode == 14 || track_mode == 15)) {
+    //   demote = true;
+    // }
     if (demote) {
       prediction.at(0) = 0.5;  // demote to 2 GeV
     }

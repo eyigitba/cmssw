@@ -77,6 +77,7 @@ void PtAssignment::process(EMTFTrackCollection& best_tracks) {
     float xmlpt = 0.;
     float pt = 0.;
     float pt_dxy = 0.;
+    float pt_NN = 0.;
     float dxy = 0.;
     int gmt_pt = 0;
     int gmt_pt_dxy = 0;
@@ -115,6 +116,7 @@ void PtAssignment::process(EMTFTrackCollection& best_tracks) {
 
     // pt_dxy = aux_dxy().getTriggerPtDxy(prediction.at(0));
     pt_dxy = std::abs(1.0/prediction.at(0));
+    pt_NN = std::abs(1.0/prediction.at(0));
     dxy = prediction.at(1);
 
     gmt_pt_dxy = aux_dxy().getGMTPtDxy(pt_dxy);
@@ -157,6 +159,7 @@ void PtAssignment::process(EMTFTrackCollection& best_tracks) {
     track.set_pt_XML(xmlpt);
     track.set_pt(pt);
     track.set_pt_dxy(pt_dxy);
+    track.set_pt_NN(pt_NN);
     track.set_dxy(dxy);
     track.set_charge((gmt_charge.second == 1) ? ((gmt_charge.first == 1) ? -1 : +1) : 0);
 

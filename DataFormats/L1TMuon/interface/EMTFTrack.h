@@ -132,6 +132,7 @@ namespace l1t {
     void set_second_bx(int bits) { second_bx = bits; }
     void set_pt(float val) { pt = val; }
     void set_pt_dxy(float val) { pt_dxy = val; }
+    void set_pt_NN(float val) { pt_NN = val; }
     void set_dxy(float val) { dxy = val; }
     void set_pt_XML(float val) { pt_XML = val; }
     void set_zone(int bits) { zone = bits; }
@@ -180,7 +181,10 @@ namespace l1t {
     float Phi_glob() const { return phi_glob; }
     int GMT_pt() const { return gmt_pt; }
     int GMT_pt_dxy() const { return gmt_pt_dxy; }
+    float emtf_pt_dxy() const { return pt_dxy; }
+    float NN_pt_dxy() const { return pt_NN; }
     int GMT_dxy() const { return gmt_dxy; }
+    float NN_dxy() const { return dxy; }
     int GMT_phi() const { return gmt_phi; }
     int GMT_eta() const { return gmt_eta; }
     int GMT_quality() const { return gmt_quality; }
@@ -214,6 +218,7 @@ namespace l1t {
     float pt;           //  0 - 255
     float pt_XML;       //  0 - 999
     float pt_dxy;       //  0 - 255
+    float pt_NN;       //  floating point NN output
     float dxy;          //  0 - 255
     int zone;           //  0 -  3.
     int ph_num;

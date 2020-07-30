@@ -12,7 +12,10 @@ void MicroGMTConverter::convert(const int global_event_BX,
 
   out_cand.setHwPt(in_track.GMT_pt());
   out_cand.setHwPt2( in_track.GMT_pt_dxy());
+  out_cand.setHwPt2EMTF( in_track.emtf_pt_dxy());
+  out_cand.setHwPt2NN( in_track.NN_pt_dxy());
   out_cand.setHwDXY( in_track.GMT_dxy());
+  out_cand.setHwDXYNN( in_track.NN_dxy());
   out_cand.setHwPhi(in_track.GMT_phi());
   out_cand.setHwEta(in_track.GMT_eta());
   out_cand.setHwSign(in_track.GMT_charge());
@@ -20,6 +23,8 @@ void MicroGMTConverter::convert(const int global_event_BX,
   out_cand.setHwQual(in_track.GMT_quality());
   out_cand.setHwHF(false);  // EMTF: halo -> 1
   out_cand.setTFIdentifiers(sector, tftype);
+
+  // std::cout << in_track.GMT_dxy() << " " << out_cand.hwDXY() << std::endl;
 
   const EMTFPtLUT& ptlut_data = in_track.PtLUT();
 

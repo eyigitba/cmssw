@@ -17,7 +17,10 @@ void L1Analysis::L1AnalysisL1UpgradeTfMuon::SetTfMuon(const l1t::RegionalMuonCan
   
         l1upgradetfmuon_.tfMuonHwPt.push_back(it->hwPt());
         l1upgradetfmuon_.tfMuonHwPtDxy.push_back(it->hwPt2());
+        l1upgradetfmuon_.tfMuonHwPtDxyNN.push_back(it->hwPt2NN());
+        l1upgradetfmuon_.tfMuonHwPtDxyEMTF.push_back(it->hwPt2EMTF());
         l1upgradetfmuon_.tfMuonHwDxy.push_back(it->hwDXY());
+        l1upgradetfmuon_.tfMuonHwDxyNN.push_back(it->hwDXYNN());
         l1upgradetfmuon_.tfMuonHwEta.push_back(it->hwEta());
         l1upgradetfmuon_.tfMuonHwPhi.push_back(it->hwPhi());
   l1upgradetfmuon_.tfMuonGlobalPhi.push_back(l1t::MicroGMTConfiguration::calcGlobalPhi(it->hwPhi(),it->trackFinderType(),it->processor())); 
