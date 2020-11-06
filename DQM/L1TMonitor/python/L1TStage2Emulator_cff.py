@@ -82,16 +82,16 @@ valGtStage2Digis.GetPrescaleColumnFromData = cms.bool(True)
 valGtStage2Digis.AlgoBlkInputTag = cms.InputTag("gtStage2Digis")
 
 Stage2L1HardwareValidation = cms.Sequence(
-    valCaloStage2Layer1Digis +
-    valBmtfDigis +
-    valKBmtfStubs +
-    valKBmtfDigis +
-    valBmtfAlgoSel +
-    valOmtfDigis +
-    valEmtfStage2Digis +
-    valGmtCaloSumDigis +
-    valGmtStage2Digis +
-    valGtStage2Digis
+    # valCaloStage2Layer1Digis +
+    # valBmtfDigis +
+    # valKBmtfStubs +
+    # valKBmtfDigis +
+    # valBmtfAlgoSel +
+    # valOmtfDigis +
+    valEmtfStage2Digis
+    # valGmtCaloSumDigis +
+    # valGmtStage2Digis +
+    # valGtStage2Digis
 )
 
 Stage2L1HardwareValidationForValidationEvents = cms.Sequence(
@@ -130,13 +130,13 @@ from DQM.L1TMonitor.L1TdeStage2uGT_cfi import *
 
 # sequence to run for every event
 l1tStage2EmulatorOnlineDQM = cms.Sequence(
-    l1tdeStage2Bmtf +
-    l1tdeStage2BmtfSecond +
-    l1tdeStage2Omtf +
-    l1tdeStage2EmtfOnlineDQMSeq +
-    l1tStage2uGMTEmulatorOnlineDQMSeq +
-    l1tdeStage2uGT +
-    l1tStage2uGtEmul
+    # l1tdeStage2Bmtf +
+    # l1tdeStage2BmtfSecond +
+    # l1tdeStage2Omtf +
+    l1tdeStage2EmtfOnlineDQMSeq
+    # l1tStage2uGMTEmulatorOnlineDQMSeq +
+    # l1tdeStage2uGT +
+    # l1tStage2uGtEmul
 )
 
 # sequence to run only for validation events
