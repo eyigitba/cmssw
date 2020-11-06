@@ -217,35 +217,8 @@ process.simCscTriggerPrimitiveDigis = process.cscTriggerPrimitiveDigis.clone()
 process.simCscTriggerPrimitiveDigis.CSCComparatorDigiProducer = cms.InputTag('muonCSCDigis', 'MuonCSCComparatorDigi')
 process.simCscTriggerPrimitiveDigis.CSCWireDigiProducer       = cms.InputTag('muonCSCDigis', 'MuonCSCWireDigi')
 
-# process.simCscTriggerPrimitiveDigis.GEMPadDigiProducer       = cms.InputTag('muonGEMPadDigis')
-# process.simCscTriggerPrimitiveDigis.GEMPadDigiClusterProducer       = cms.InputTag('muonGEMPadDigiClusters')
 
-
-# process.simCscTriggerPrimitiveDigis.GEMPadDigiProducer = cms.InputTag("")
-# process.simCscTriggerPrimitiveDigis.GEMPadDigiClusterProducer = cms.InputTag("")
-# process.simCscTriggerPrimitiveDigis.commonParam = cms.untracked.PSet(
-#   # isSLHC = False,
-#   runME11Up = cms.bool(False),
-#   runME11ILT = cms.bool(False),
-#   useClusters = cms.bool(False),
-#   enableAlctSLHC = cms.bool(False)),
- # clctSLHC = dict(clctNplanesHitPattern = 3),
- # me11tmbSLHCGEM = me11tmbSLHCGEM,
- # copadParamGE11 = copadParamGE11
-
-
-
-
-# process.simEmtfDigisMC.verbosity  = cms.untracked.int32(0)
-# process.simEmtfDigisMC.CPPFEnable = cms.bool(False)
-
-# process.simEmtfDigisMC.FWConfig = cms.bool(True)
-
-# process.simEmtfDigisMCSimHit = process.simEmtfDigisMC.clone()
-
-# process.simEmtfDigisMCSimHit.CSCInput = cms.InputTag('simCscTriggerPrimitiveDigis','MPCSORTED') ## Re-emulated CSC LCTs
-# process.simEmtfDigisMCSimHit.CSCInputBXShift = cms.int32(-8) ## Only for re-emulated CSC LCTs (vs. -6 default)
-# process.simEmtfDigisMCSimHit.CPPFEnable = cms.bool(False)
+process.simEmtfDigis.GEMEnable = cms.bool(True)
 
 process.muonGEMDigis.useDBEMap = False
 
