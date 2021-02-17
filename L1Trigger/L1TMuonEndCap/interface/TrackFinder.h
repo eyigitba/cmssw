@@ -15,7 +15,7 @@
 
 class TrackFinder {
 public:
-  explicit TrackFinder(const edm::ParameterSet& iConfig, edm::ConsumesCollector&& iConsumes);
+  explicit TrackFinder(const edm::ParameterSet& iConfig, edm::ConsumesCollector&& iConsumes, const L1TMuonEndCapCache *cache);
   ~TrackFinder();
 
   void process(

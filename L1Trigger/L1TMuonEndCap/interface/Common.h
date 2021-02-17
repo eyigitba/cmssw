@@ -16,6 +16,16 @@
 #include "L1Trigger/L1TMuonEndCap/interface/EMTFSubsystemTag.h"
 #include "L1Trigger/L1TMuonEndCap/interface/TrackTools.h"
 #include "L1Trigger/L1TMuonEndCap/interface/DebugTools.h"
+#include "PhysicsTools/TensorFlow/interface/TensorFlow.h"
+
+// define the cache object
+// it could handle graph loading and destruction on its own,
+// but in this example, we define it as a logicless container
+struct L1TMuonEndCapCache {
+  L1TMuonEndCapCache() : graphDefDxy_(nullptr) {}
+  std::atomic<tensorflow::GraphDef*> graphDefDxy_;
+};
+
 
 // Resolve namespaces
 

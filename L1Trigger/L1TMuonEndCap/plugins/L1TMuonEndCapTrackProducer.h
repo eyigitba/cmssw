@@ -14,14 +14,19 @@
 
 #include "L1Trigger/L1TMuonEndCap/interface/TrackFinder.h"
 #include "L1Trigger/L1TMuonEndCap/interface/MicroGMTConverter.h"
+#include "L1Trigger/L1TMuonEndCap/interface/Common.h"
+
 
 // Class declaration
-class L1TMuonEndCapTrackProducer : public edm::stream::EDProducer<> {
+class L1TMuonEndCapTrackProducer : public edm::stream::EDProducer<edm::GlobalCache<L1TMuonEndCapCache>> {
 public:
-  explicit L1TMuonEndCapTrackProducer(const edm::ParameterSet&);
+  explicit L1TMuonEndCapTrackProducer(const edm::ParameterSet&, const L1TMuonEndCapCache *cache);
   ~L1TMuonEndCapTrackProducer() override;
 
   static void fillDescriptions(edm::ConfigurationDescriptions& descriptions);
+  // two additional static methods for handling the global cache
+  static std::unique_ptr<L1TMuonEndCapCache> initializeGlobalCache(const edm::ParameterSet&);
+  static void globalEndJob(const L1TMuonEndCapCache*);
 
 private:
   void produce(edm::Event&, const edm::EventSetup&) override;

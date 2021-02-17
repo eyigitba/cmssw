@@ -15,7 +15,7 @@
 
 class PtAssignmentEngineDxy {
 public:
-  explicit PtAssignmentEngineDxy();
+  explicit PtAssignmentEngineDxy(const L1TMuonEndCapCache *cache);
   virtual ~PtAssignmentEngineDxy();
 
   void configure(int verbose, const std::string pbFileNameDxy);
