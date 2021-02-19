@@ -1,7 +1,8 @@
 #include "L1TMuonEndCapTrackProducer.h"
 
-L1TMuonEndCapTrackProducer::L1TMuonEndCapTrackProducer(const edm::ParameterSet& iConfig)
-    : track_finder_(new TrackFinder(iConfig, consumesCollector())),
+L1TMuonEndCapTrackProducer::L1TMuonEndCapTrackProducer(const edm::ParameterSet& iConfig, const L1TMuonEndCapNNCache* cache)
+    : pt_assign_engine_dxy_(new PtAssignmentEngineDxy(cache)),
+      track_finder_(new TrackFinder(iConfig, consumesCollector(), pt_assign_engine_dxy_.get())),
       uGMT_converter_(new MicroGMTConverter()),
       config_(iConfig) {
   // Make output products
@@ -11,6 +12,28 @@ L1TMuonEndCapTrackProducer::L1TMuonEndCapTrackProducer(const edm::ParameterSet& 
 }
 
 L1TMuonEndCapTrackProducer::~L1TMuonEndCapTrackProducer() {}
+
+std::unique_ptr<L1TMuonEndCapNNCache> L1TMuonEndCapTrackProducer::initializeGlobalCache(const edm::ParameterSet& iConfig) {
+  // auto spPAParams16 = iConfig.getParameter<edm::ParameterSet>("spPAParams16");
+  // std::string pbFileNameDxy_ = spPAParams16.getParameter<std::string>("ProtobufFileName");
+
+  // std::string pbFilePathDxy_ = "L1Trigger/L1TMuon/data/emtf_luts/" + pbFileNameDxy_;
+
+  std::string pbFilePathDxy_ = "model_graph.displ.5.1.pb";
+
+  pbFilePathDxy_ = edm::FileInPath(pbFilePathDxy_).fullPath();
+
+  // L1TMuonEndCapCache* cache = new L1TMuonEndCapCache();
+  // cache->graphDefDxy_ = tensorflow::loadGraphDef(edm::FileInPath(pbFilePathDxy_).fullPath());
+  return std::make_unique<L1TMuonEndCapNNCache>(pbFilePathDxy_);
+}
+
+void L1TMuonEndCapTrackProducer::globalEndJob(const L1TMuonEndCapNNCache* cache) {
+  // reset the graphDef
+  // if (cache->graphDefDxy_ != nullptr) {
+    // delete cache->graphDefDxy_;
+  // }
+}
 
 void L1TMuonEndCapTrackProducer::produce(edm::Event& iEvent, const edm::EventSetup& iSetup) {
   // Create pointers to output products

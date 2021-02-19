@@ -3,9 +3,10 @@
 #include <iostream>
 #include <sstream>
 
-TrackFinder::TrackFinder(const edm::ParameterSet& iConfig, edm::ConsumesCollector&& iConsumes)
-    : setup_(iConfig),
+TrackFinder::TrackFinder(const edm::ParameterSet& iConfig, edm::ConsumesCollector&& iConsumes, PtAssignmentEngineDxy* pt_assign_engine_dxy)
+    : setup_(iConfig, pt_assign_engine_dxy),
       sector_processors_(),
+      pt_assign_engine_dxy_(pt_assign_engine_dxy),
       tokenDTPhi_(iConsumes.consumes<emtf::DTTag::digi_collection>(iConfig.getParameter<edm::InputTag>("DTPhiInput"))),
       tokenDTTheta_(
           iConsumes.consumes<emtf::DTTag::theta_digi_collection>(iConfig.getParameter<edm::InputTag>("DTThetaInput"))),

@@ -12,10 +12,12 @@
 #include "L1Trigger/L1TMuonEndCap/interface/EMTFSetup.h"
 #include "L1Trigger/L1TMuonEndCap/interface/EMTFSubsystemCollector.h"
 #include "L1Trigger/L1TMuonEndCap/interface/SectorProcessor.h"
+#include "L1Trigger/L1TMuonEndCap/interface/PtAssignmentEngineDxy.h"
+
 
 class TrackFinder {
 public:
-  explicit TrackFinder(const edm::ParameterSet& iConfig, edm::ConsumesCollector&& iConsumes);
+  explicit TrackFinder(const edm::ParameterSet& iConfig, edm::ConsumesCollector&& iConsumes, PtAssignmentEngineDxy* pt_assign_engine_dxy);
   ~TrackFinder();
 
   void process(
@@ -30,6 +32,8 @@ private:
   EMTFSetup setup_;
 
   emtf::sector_array<SectorProcessor> sector_processors_;
+  PtAssignmentEngineDxy* pt_assign_engine_dxy_;
+
 
   // Various tokens
   const edm::EDGetToken tokenDTPhi_;

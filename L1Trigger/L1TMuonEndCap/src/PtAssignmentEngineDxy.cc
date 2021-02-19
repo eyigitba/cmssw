@@ -6,34 +6,34 @@
 
 #include "helper.h"  // assert_no_abort
 
-PtAssignmentEngineDxy::PtAssignmentEngineDxy() : graphDefDxy_(nullptr), sessionDxy_(nullptr) {}
+PtAssignmentEngineDxy::PtAssignmentEngineDxy(const L1TMuonEndCapNNCache* cache) : cache_(cache) {}
 
 PtAssignmentEngineDxy::~PtAssignmentEngineDxy() {
-  if (sessionDxy_ != nullptr) {
-    tensorflow::closeSession(sessionDxy_);
-  }
-  delete graphDefDxy_;
+  // if (sessionDxy_ != nullptr) {
+  //   tensorflow::closeSession(sessionDxy_);
+  // }
+  // delete graphDefDxy_;
 }
 
 void PtAssignmentEngineDxy::configure(int verbose, const std::string pbFileNameDxy) {
   verbose_ = verbose;
 
-  pbFileNameDxy_ = pbFileNameDxy;
-  std::string pbFilePathDxy_ = "L1Trigger/L1TMuon/data/emtf_luts/" + pbFileNameDxy_;
+  // pbFileNameDxy_ = pbFileNameDxy;
+  // std::string pbFilePathDxy_ = "L1Trigger/L1TMuon/data/emtf_luts/" + pbFileNameDxy_;
 
   inputNameDxy_ = "batch_normalization_1_input";
   outputNamesDxy_ = {"dense_4/BiasAdd"};
 
-  if (graphDefDxy_ == nullptr) {
-    graphDefDxy_ = tensorflow::loadGraphDef(edm::FileInPath(pbFilePathDxy_).fullPath());
-  }
-  emtf_assert(graphDefDxy_ != nullptr);
+  // if (graphDefDxy_ == nullptr) {
+  //   graphDefDxy_ = tensorflow::loadGraphDef(edm::FileInPath(pbFilePathDxy_).fullPath());
+  // }
+  // emtf_assert(graphDefDxy_ != nullptr);
 
-  if (sessionDxy_ == nullptr) {
-    sessionDxy_ = tensorflow::createSession(graphDefDxy_);
-  }
+  // if (sessionDxy_ == nullptr) {
+  //   sessionDxy_ = tensorflow::createSession(graphDefDxy_);
+  // }
 
-  emtf_assert(sessionDxy_ != nullptr);
+  // emtf_assert(sessionDxy_ != nullptr);
 }
 
 const PtAssignmentEngineAux2017& PtAssignmentEngineDxy::aux() const {
@@ -245,7 +245,7 @@ void PtAssignmentEngineDxy::call_tensorflow_dxy(const emtf::Feature& feature, em
 
   float* d = input.flat<float>().data();
   std::copy(feature.begin(), feature.end(), d);
-  tensorflow::run(sessionDxy_, {{inputNameDxy_, input}}, outputNamesDxy_, &outputs);
+  tensorflow::run(&(cache_->getSession()), {{inputNameDxy_, input}}, outputNamesDxy_, &outputs);
   emtf_assert(outputs.size() == 1);
   emtf_assert(prediction.size() == emtf::NUM_PREDICTIONS);
 
@@ -260,3 +260,22 @@ void PtAssignmentEngineDxy::call_tensorflow_dxy(const emtf::Feature& feature, em
   prediction.at(1) /= reg_dxy_scale;
   return;
 }
+
+L1TMuonEndCapNNCache::L1TMuonEndCapNNCache(const std::string& graph_file) {
+
+  tensorflow::SessionOptions options;
+  tensorflow::setThreading(options, 1);
+
+  // graph_file = edm::FileInPath(graph_file).fullPath();
+  graph_ = tensorflow::loadGraphDef(graph_file);
+  std::cout << "Creating session!!!!!" << std::endl;
+  session_ = tensorflow::createSession(graph_, options);
+
+
+}
+
+L1TMuonEndCapNNCache::~L1TMuonEndCapNNCache() {
+      tensorflow::closeSession(session_);
+}
+
+

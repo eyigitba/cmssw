@@ -13,9 +13,25 @@
 #include "PhysicsTools/TensorFlow/interface/TensorFlow.h"
 #include "FWCore/ParameterSet/interface/FileInPath.h"
 
+class L1TMuonEndCapNNCache {
+  public:
+
+    L1TMuonEndCapNNCache(const std::string& graph_file);
+    ~L1TMuonEndCapNNCache();
+
+    // A Session allows concurrent calls to Run(), though a Session must
+    // be created / extended by a single thread.
+    tensorflow::Session& getSession() const { return *session_; }
+    tensorflow::GraphDef& getGraph() const { return *graph_; }
+
+  private:
+    tensorflow::GraphDef* graph_;
+    tensorflow::Session* session_;
+};
+
 class PtAssignmentEngineDxy {
 public:
-  explicit PtAssignmentEngineDxy();
+  explicit PtAssignmentEngineDxy(const L1TMuonEndCapNNCache* cache);
   virtual ~PtAssignmentEngineDxy();
 
   void configure(int verbose, const std::string pbFileNameDxy);
@@ -31,8 +47,10 @@ public:
 protected:
   int verbose_;
 
-  tensorflow::GraphDef* graphDefDxy_;
-  tensorflow::Session* sessionDxy_;
+  // tensorflow::GraphDef* graphDefDxy_;
+  // tensorflow::Session* sessionDxy_;
+  const L1TMuonEndCapNNCache* cache_;
+
   std::string pbFileNameDxy_;
   std::string pbFilePathDxy_;
   std::string inputNameDxy_;
