@@ -7,7 +7,7 @@
 #include "L1Trigger/L1TMuonEndCap/interface/PtAssignmentEngine2016.h"
 #include "L1Trigger/L1TMuonEndCap/interface/PtAssignmentEngine2017.h"
 
-EMTFSetup::EMTFSetup(const edm::ParameterSet& iConfig)
+EMTFSetup::EMTFSetup(const edm::ParameterSet& iConfig, EMTFDisplacedNN* emtf_displaced_nn)
     : geometry_translator_(),
       condition_helper_(),
       version_control_(iConfig),
@@ -29,7 +29,7 @@ EMTFSetup::EMTFSetup(const edm::ParameterSet& iConfig)
   }
 
   // No era setup for displaced pT assignment engine
-  pt_assign_engine_dxy_ = std::make_unique<PtAssignmentEngineDxy>();
+  pt_assign_engine_dxy_ = std::make_unique<PtAssignmentEngineDxy>(emtf_displaced_nn);
 
   emtf_assert(pt_assign_engine_ != nullptr);
   emtf_assert(pt_assign_engine_dxy_ != nullptr);

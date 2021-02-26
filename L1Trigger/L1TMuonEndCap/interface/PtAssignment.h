@@ -22,8 +22,7 @@ public:
                  bool bugNegPt,
                  bool bugGMTPhi,
                  bool promoteMode7,
-                 int modeQualVer,
-                 std::string pbFileName);
+                 int modeQualVer);
 
   void process(EMTFTrackCollection& best_tracks);
 

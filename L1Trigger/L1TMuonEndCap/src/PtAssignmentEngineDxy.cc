@@ -6,34 +6,15 @@
 
 #include "helper.h"  // assert_no_abort
 
-PtAssignmentEngineDxy::PtAssignmentEngineDxy() : graphDefDxy_(nullptr), sessionDxy_(nullptr) {}
+PtAssignmentEngineDxy::PtAssignmentEngineDxy(EMTFDisplacedNN* emtf_displaced_nn) : emtf_displaced_nn_(emtf_displaced_nn){}
 
-PtAssignmentEngineDxy::~PtAssignmentEngineDxy() {
-  if (sessionDxy_ != nullptr) {
-    tensorflow::closeSession(sessionDxy_);
-  }
-  delete graphDefDxy_;
-}
+PtAssignmentEngineDxy::~PtAssignmentEngineDxy() {}
 
-void PtAssignmentEngineDxy::configure(int verbose, const std::string pbFileNameDxy) {
+void PtAssignmentEngineDxy::configure(int verbose) {
   verbose_ = verbose;
 
-  pbFileNameDxy_ = pbFileNameDxy;
-  std::string pbFilePathDxy_ = "L1Trigger/L1TMuon/data/emtf_luts/" + pbFileNameDxy_;
+  emtf_displaced_nn_->configure(verbose);
 
-  inputNameDxy_ = "batch_normalization_1_input";
-  outputNamesDxy_ = {"dense_4/BiasAdd"};
-
-  if (graphDefDxy_ == nullptr) {
-    graphDefDxy_ = tensorflow::loadGraphDef(edm::FileInPath(pbFilePathDxy_).fullPath());
-  }
-  emtf_assert(graphDefDxy_ != nullptr);
-
-  if (sessionDxy_ == nullptr) {
-    sessionDxy_ = tensorflow::createSession(graphDefDxy_);
-  }
-
-  emtf_assert(sessionDxy_ != nullptr);
 }
 
 const PtAssignmentEngineAux2017& PtAssignmentEngineDxy::aux() const {
@@ -46,7 +27,7 @@ void PtAssignmentEngineDxy::calculate_pt_dxy(const EMTFTrack& track,
                                              emtf::Prediction& prediction) const {
   // This is called for each track instead of for entire track collection as was done in Phase-2 implementation
   preprocessing_dxy(track, feature);
-  call_tensorflow_dxy(feature, prediction);
+  emtf_displaced_nn_->call_tensorflow_dxy(feature, prediction);
   return;
 }
 
@@ -200,7 +181,6 @@ void PtAssignmentEngineDxy::preprocessing_dxy(const EMTFTrack& track, emtf::Feat
 
   // Set NN inputs
 
-  // NN was trained with the wrong sign convention. TO BE CHANGED LATER!
   x_dphi[0] = dPhi_12;
   x_dphi[1] = dPhi_13;
   x_dphi[2] = dPhi_14;
@@ -208,7 +188,6 @@ void PtAssignmentEngineDxy::preprocessing_dxy(const EMTFTrack& track, emtf::Feat
   x_dphi[4] = dPhi_24;
   x_dphi[5] = dPhi_34;
 
-  // NN was trained with the wrong sign convention. TO BE CHANGED LATER!
   x_dtheta[0] = dTh_12;
   x_dtheta[1] = dTh_13;
   x_dtheta[2] = dTh_14;
@@ -216,7 +195,6 @@ void PtAssignmentEngineDxy::preprocessing_dxy(const EMTFTrack& track, emtf::Feat
   x_dtheta[4] = dTh_24;
   x_dtheta[5] = dTh_34;
 
-  // NN was trained with the wrong sign convention. TO BE CHANGED LATER!
   x_bend_emtf[0] = bend_1;
   x_bend_emtf[1] = bend_2;
   x_bend_emtf[2] = bend_3;
@@ -235,28 +213,5 @@ void PtAssignmentEngineDxy::preprocessing_dxy(const EMTFTrack& track, emtf::Feat
               x_dtheta[0],    x_dtheta[1],    x_dtheta[2],    x_dtheta[3],    x_dtheta[4],  x_dtheta[5],
               x_bend_emtf[0], x_bend_emtf[1], x_bend_emtf[2], x_bend_emtf[3], x_fr_emtf[0], x_trk_theta[0],
               x_me11ring[0],  x_rpcbit[0],    x_rpcbit[1],    x_rpcbit[2],    x_rpcbit[3]}};
-  return;
-}
-
-void PtAssignmentEngineDxy::call_tensorflow_dxy(const emtf::Feature& feature, emtf::Prediction& prediction) const {
-  tensorflow::Tensor input(tensorflow::DT_FLOAT, {1, emtf::NUM_FEATURES});
-  std::vector<tensorflow::Tensor> outputs;
-  emtf_assert(feature.size() == emtf::NUM_FEATURES);
-
-  float* d = input.flat<float>().data();
-  std::copy(feature.begin(), feature.end(), d);
-  tensorflow::run(sessionDxy_, {{inputNameDxy_, input}}, outputNamesDxy_, &outputs);
-  emtf_assert(outputs.size() == 1);
-  emtf_assert(prediction.size() == emtf::NUM_PREDICTIONS);
-
-  const float reg_pt_scale = 100.0;  // a scale factor applied to regression during training
-  const float reg_dxy_scale = 1.0;   // a scale factor applied to regression during training
-
-  prediction.at(0) = outputs[0].matrix<float>()(0, 0);
-  prediction.at(1) = outputs[0].matrix<float>()(0, 1);
-
-  // Remove scale factor used during training
-  prediction.at(0) /= reg_pt_scale;
-  prediction.at(1) /= reg_dxy_scale;
   return;
 }

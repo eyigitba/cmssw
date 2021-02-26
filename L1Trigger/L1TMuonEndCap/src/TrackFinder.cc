@@ -3,8 +3,8 @@
 #include <iostream>
 #include <sstream>
 
-TrackFinder::TrackFinder(const edm::ParameterSet& iConfig, edm::ConsumesCollector&& iConsumes)
-    : setup_(iConfig),
+TrackFinder::TrackFinder(const edm::ParameterSet& iConfig, edm::ConsumesCollector&& iConsumes, EMTFDisplacedNN* emtf_displaced_nn)
+    : setup_(iConfig, emtf_displaced_nn),
       sector_processors_(),
       tokenDTPhi_(iConsumes.consumes<emtf::DTTag::digi_collection>(iConfig.getParameter<edm::InputTag>("DTPhiInput"))),
       tokenDTTheta_(
