@@ -16,7 +16,6 @@
 #include "L1Trigger/L1TMuonEndCap/interface/MicroGMTConverter.h"
 #include "L1Trigger/L1TMuonEndCap/interface/EMTFDisplacedNN.h"
 
-
 // Class declaration
 class L1TMuonEndCapTrackProducer : public edm::stream::EDProducer<edm::GlobalCache<L1TMuonEndCapNNCache>> {
 public:

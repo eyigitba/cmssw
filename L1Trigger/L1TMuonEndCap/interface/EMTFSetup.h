@@ -18,7 +18,6 @@
 #include "L1Trigger/L1TMuonEndCap/interface/PtAssignmentEngineDxy.h"
 #include "L1Trigger/L1TMuonEndCap/interface/EMTFDisplacedNN.h"
 
-
 class EMTFSetup {
 public:
   explicit EMTFSetup(const edm::ParameterSet& iConfig, EMTFDisplacedNN* emtf_displaced_nn);

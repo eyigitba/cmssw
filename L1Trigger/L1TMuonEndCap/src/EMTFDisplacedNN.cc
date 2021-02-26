@@ -47,7 +47,6 @@ L1TMuonEndCapNNCache::L1TMuonEndCapNNCache(const std::string& graph_file) {
   tensorflow::SessionOptions options;
   tensorflow::setThreading(options, 1);
 
-  // graph_file = edm::FileInPath(graph_file).fullPath();
   graph_ = tensorflow::loadGraphDef(graph_file);
   session_ = tensorflow::createSession(graph_, options);
 

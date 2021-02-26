@@ -19,8 +19,6 @@ std::unique_ptr<L1TMuonEndCapNNCache> L1TMuonEndCapTrackProducer::initializeGlob
 
   std::string pbFilePathDxy_ = "L1Trigger/L1TMuon/data/emtf_luts/" + pbFileNameDxy_;
 
-  // std::string pbFilePathDxy_ = "model_graph.displ.5.1.pb";
-
   pbFilePathDxy_ = edm::FileInPath(pbFilePathDxy_).fullPath();
 
   return std::make_unique<L1TMuonEndCapNNCache>(pbFilePathDxy_);

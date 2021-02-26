@@ -14,7 +14,6 @@
 #include "L1Trigger/L1TMuonEndCap/interface/SectorProcessor.h"
 #include "L1Trigger/L1TMuonEndCap/interface/EMTFDisplacedNN.h"
 
-
 class TrackFinder {
 public:
   explicit TrackFinder(const edm::ParameterSet& iConfig, edm::ConsumesCollector&& iConsumes, EMTFDisplacedNN* emtf_displaced_nn);
