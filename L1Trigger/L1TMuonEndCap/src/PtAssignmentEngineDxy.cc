@@ -68,6 +68,15 @@ void PtAssignmentEngineDxy::preprocessing_dxy(const EMTFTrack& track, emtf::Feat
   std::array<float, 1> x_me11ring;
   std::array<float, 4> x_rpcbit;
 
+  // for (const auto& conv_hit : track.Hits()) {
+    // std::cout << "hit subsystem: " << conv_hit.Subsystem() << std::endl;
+  //   std::cout << "hit subsystem: " << conv_hit.Subsystem() << " st: " << conv_hit.PC_station() << " ch: " << conv_hit.PC_chamber()
+  //                 << " ph: " << conv_hit.Phi_fp() << " th: " << conv_hit.Theta_fp() << " strip: " << conv_hit.Strip()
+  //                 << " wire: " << conv_hit.Wire() << " Roll: " << conv_hit.Roll() << " cpat: " << conv_hit.Pattern()
+  //                 << " zone_hit: " << conv_hit.Zone_hit() << " zone_code: " << conv_hit.Zone_code()
+  //                 << " bx: " << conv_hit.BX() << std::endl;
+  // }
+
   // Initialize to zeros
   x_dphi.fill(0);
   x_dtheta.fill(0);
@@ -113,7 +122,7 @@ void PtAssignmentEngineDxy::preprocessing_dxy(const EMTFTrack& track, emtf::Feat
   fr_1 = data.fr[0];
 
   // RPC hit in station
-  rpc_1 = (st1 ? (pat1 == 0) : 0);
+  rpc_1 = (st1 ? (pat1 == 0 && fr_1 == 0) : 0);
   rpc_2 = (st2 ? (pat2 == 0) : 0);
   rpc_3 = (st3 ? (pat3 == 0) : 0);
   rpc_4 = (st4 ? (pat4 == 0) : 0);
@@ -230,6 +239,11 @@ void PtAssignmentEngineDxy::preprocessing_dxy(const EMTFTrack& track, emtf::Feat
   x_rpcbit[1] = rpc_2;
   x_rpcbit[2] = rpc_3;
   x_rpcbit[3] = rpc_4;
+
+      // std::cout << "features xdphi0: " << x_dphi[0] << " xdphi1: " << x_dphi[1] << " xdphi2: " << x_dphi[2] << " xdphi3: " << x_dphi[3] << " xdphi4: " << x_dphi[4] << " xdphi5: " << x_dphi[4]
+      //               << " xdtheta0: " << x_dtheta[0] << " xdtheta1: " << x_dtheta[1] << " xdtheta2: " << x_dtheta[2] << " xdtheta3: " << x_dtheta[3] << " xdtheta4: " << x_dtheta[4] << " xdtheta5: " << x_dtheta[5]
+      //               << " xbend0: " << x_bend_emtf[0] << " xbend1: " << x_bend_emtf[1] << " xbend2: " << x_bend_emtf[2] << " xbend3: " << x_bend_emtf[3] << " xfr: " << x_fr_emtf[0] << " xtrktheta: " << x_trk_theta[0]
+      //               << " xme11ring: " << x_me11ring[0] << " xrpcbit0: " << x_rpcbit[0] << " xrpcbit1: " << x_rpcbit[1] << " xrpcbit2: " << x_rpcbit[2] << " xrpcbit3: " << x_rpcbit[3] <<  std::endl;
 
   feature = {{x_dphi[0],      x_dphi[1],      x_dphi[2],      x_dphi[3],      x_dphi[4],    x_dphi[5],
               x_dtheta[0],    x_dtheta[1],    x_dtheta[2],    x_dtheta[3],    x_dtheta[4],  x_dtheta[5],
