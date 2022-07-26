@@ -60,12 +60,18 @@ void FlatRandomOneOverPtGunProducer::produce(Event& e, const EventSetup& es) {
   int barcode = 1;
   for (unsigned int ip = 0; ip < fPartIDs.size(); ++ip) {
     double xx = CLHEP::RandFlat::shoot(engine, 0.0, 1.0);
-    double pt = std::exp((1. - xx) * std::log(fMinOneOverPt) + xx * std::log(fMaxOneOverPt));
+    // double pt = std::exp((1. - xx) * std::log(fMinOneOverPt) + xx * std::log(fMaxOneOverPt));
+    // std::cout << "using real flat 1/pT" << std::endl;
+    double pt     = fMinOneOverPt + xx * (fMaxOneOverPt - fMinOneOverPt);
+    if (pt != 0.0)  pt = 1.0/pt;
     double eta = CLHEP::RandFlat::shoot(engine, fMinEta, fMaxEta);
     double phi = CLHEP::RandFlat::shoot(engine, fMinPhi, fMaxPhi);
-    if (pt != 0)
-      pt = 1. / pt;
+    // if (pt != 0)
+      // pt = 1. / pt;
     int PartID = fPartIDs[ip];
+    bool fRandomCharge = true;
+    if (fRandomCharge && (CLHEP::RandFlat::shoot(engine, 0.0, 1.0) < 0.5))
+      PartID = - PartID;
     const HepPDT::ParticleData* PData = fPDGTable->particle(HepPDT::ParticleID(abs(PartID)));
     double mass = PData->mass().value();
     double theta = 2. * atan(exp(-eta));
