@@ -31,6 +31,14 @@ void L1Analysis::L1AnalysisRecoMuon2::SetMuon(const edm::Event& event,
     recoMuon_.phi.push_back(it->phi());
     recoMuon_.charge.push_back(it->charge());
 
+    // muon track parameters
+    if (vertices.isValid()){
+      if( !(it->muonBestTrack().isNull())){
+        recoMuon_.dz.push_back( it->muonBestTrack()->dz((*vertices)[0].position()));
+        recoMuon_.dxy.push_back( it->muonBestTrack()->dxy((*vertices)[0].position()));
+      }
+    }
+
     //check isLooseMuon
     bool flagLoose = isLooseMuonCustom(*it);
     recoMuon_.isLooseMuon.push_back(flagLoose);

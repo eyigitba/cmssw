@@ -17,12 +17,12 @@ l1UpgradeTfMuonTree.emtfMuonToken = cms.untracked.InputTag("gmtStage2Digis","EMT
 L1NtupleRAW = cms.Sequence(
   l1EventTree
   #+l1ExtraTree
-  +l1CaloTowerTree
+  # +l1CaloTowerTree
   +l1UpgradeTfMuonTree
-  +l1UpgradeTfMuonShowerTree
+  # +l1UpgradeTfMuonShowerTree
   +l1UpgradeTree
-  +l1uGTTree
-  +l1HOTree
+  # +l1uGTTree
+  # +l1HOTree
 )
 
 #  do not have l1t::CaloTowerBxCollection in Stage1

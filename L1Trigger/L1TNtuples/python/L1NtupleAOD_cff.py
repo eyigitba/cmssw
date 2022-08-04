@@ -13,11 +13,11 @@ from L1Trigger.L1TNtuples.l1MuonRecoTree_cfi import *
 
 L1NtupleAOD = cms.Sequence(
   l1EventTree
-  +l1RecoTree
-  +l1JetRecoTree
+  # +l1RecoTree
+  # +l1JetRecoTree
   +l1MetFilterRecoTree
-  +l1ElectronRecoTree
-  +l1TauRecoTree
+  # +l1ElectronRecoTree
+  # +l1TauRecoTree
   +l1MuonRecoTree
 )
 
