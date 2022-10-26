@@ -108,7 +108,7 @@ namespace l1t {
 
   GEMPadDigiCluster EMTFHit::CreateGEMPadDigiCluster() const {
     std::vector<uint16_t> pads;
-    for (int i = Pad_low(); i < Pad_hi(); ++i)
+    for (int i = Pad_low(); i <= Pad_hi(); ++i)
       pads.emplace_back(static_cast<uint16_t>(i));
     return GEMPadDigiCluster(pads, bx);
   }

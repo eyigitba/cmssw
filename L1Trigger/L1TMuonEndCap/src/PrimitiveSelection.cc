@@ -87,7 +87,8 @@ void PrimitiveSelection::process(emtf::CSCTag tag,
   // Duplicate CSC muon primitives
   // If there are 2 LCTs in the same chamber with (strip, wire) = (s1, w1) and (s2, w2)
   // make all combinations with (s1, w1), (s2, w1), (s1, w2), (s2, w2)
-  if (duplicateTheta_) {
+  // if (duplicateTheta_) {
+  if (false) {
     std::map<int, TriggerPrimitiveCollection>::iterator map_tp_it = selected_csc_map.begin();
     std::map<int, TriggerPrimitiveCollection>::iterator map_tp_end = selected_csc_map.end();
 

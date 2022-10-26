@@ -107,9 +107,10 @@ void TrackFinder::process(const edm::Event& iEvent,
   // ___________________________________________________________________________
   // Check emulator input and output. They are printed as raw text that is
   // used by the firmware simulator to do comparisons.
-  if (verbose_ > 1) {  // debug
+  // if (verbose_ > 1) {  // debug
+    std::cout << "******* Printing Out EMTF Re-Emulated Hits and Tracks *******" << std::endl;
     emtf::dump_fw_raw_input(out_hits, out_tracks);
-  }
+  // }
 
   return;
 }

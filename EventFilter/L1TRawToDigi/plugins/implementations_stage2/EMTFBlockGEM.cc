@@ -156,6 +156,7 @@ namespace l1t {
         ////////////////////////////
         // Unpack the GEM Data Record
         ////////////////////////////
+        // std::cout << "GEM hit to unpack!!!" << std::endl;
 
         GEM_.set_pad(GetHexBits(GEMa, 0, 8));
         GEM_.set_partition(GetHexBits(GEMa, 9, 11));
@@ -198,13 +199,18 @@ namespace l1t {
         Hit_.set_station(_station);
         Hit_.set_ring(_ring);
         Hit_.set_sector(_sector);
+        Hit_.set_pc_sector(_sector);
         Hit_.set_subsector(_subsector_csc);
+        Hit_.set_subsector_GEM(GEM_.Link());
         Hit_.set_chamber(_chamber);
         Hit_.set_neighbor(_neighbor);
+
+        // std::cout << "GEM chamber: " << _chamber << " sector: " << _sector << " link: " << GEM_.Link() << " neighbor: " << _neighbor << std::endl;
 
         // Fill the EMTFHit
         ImportGEM(Hit_, GEM_, (res->at(iOut)).PtrEventHeader()->Endcap(), (res->at(iOut)).PtrEventHeader()->Sector());
 
+        // std::cout << "GEM unpacked layer: " << Hit_.Layer() << std::endl;
         // Set the stub number for this hit
         // Each chamber can send up to 2 stubs per BX // FIXME is this true for GEM, are stubs relevant for GEMs?
         // Also count stubs in corresponding CSC chamber; GEM hit counting is on top of LCT counting
@@ -234,8 +240,23 @@ namespace l1t {
         //                               << Hit_.Neighbor() << ", ring " << Hit_.Ring() << ", chamber " << Hit_.Chamber()
         //                               << ", roll " << Hit_.Roll() << ", pad " << Hit_.Pad() << std::endl;
 
+        // int bx = 0;
+        // int endcap = (Hit_.Endcap() == 1) ? 1 : 2;
+        // int sector = Hit_.PC_sector();
+        // int station = Hit_.Subsector_GEM();
+        // int chamber = Hit_.Layer();
+        // int strip = Hit_.Pad();  // GE1/1
+        // int wire = Hit_.Partition();
+        // int valid = 3;
+        // // std::cout << "-------------------------------" << std::endl;
+        // // std::cout << "RPC emulated at BX: " << h.BX() << std::endl;
+        // // std::cout << bx << " " << endcap << " " << sector << " " << 0 << " " << station << " " << valid << " "
+        //           // << 0 << " " << 0 << " " << wire << " " << chamber << " " << 0 << " " << strip << std::endl;
+        // std::cout << bx << " " << endcap << " " << sector << " " << 0 << " " << station << " " << valid << " "
+        //           << 0 << " " << 0 << " " << wire << " " << chamber << " " << 0 << " " << strip << " " << 0 << " " << 0 << std::endl;
+
         (res->at(iOut)).push_GEM(GEM_);
-        if (!exact_duplicate)
+        // if (!exact_duplicate)
           res_hit->push_back(Hit_);
 
         if (!exact_duplicate)

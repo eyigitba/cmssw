@@ -224,6 +224,7 @@ namespace l1t {
         ///////////////////////////////////
         // Unpack the SP Output Data Record
         ///////////////////////////////////
+        // std::cout << "SP track to unpack!!!" << std::endl;
 
         SP_.set_phi_full(GetHexBits(SP1a, 0, 12));
         SP_.set_c(GetHexBits(SP1a, 13, 13));
@@ -274,6 +275,14 @@ namespace l1t {
 
         ImportSP(Track_, SP_, (res->at(iOut)).PtrEventHeader()->Endcap(), (res->at(iOut)).PtrEventHeader()->Sector());
         // Track_.ImportPtLUT( Track_.Mode(), Track_.Pt_LUT_addr() );  // Deprecated ... replace? - AWB 15.03.17
+
+        if (abs(Track_.Eta()) > 2.5){
+          std::cout << "--------------- Track eta problem. Eta = " << Track_.Eta() << std::endl;
+          std::cout << Track_.BX() << " " << (Track_.Endcap() == 1 ? 1 : 2) << " " << Track_.Sector() << " " << Track_.PtLUT().address
+          << " " << Track_.Mode() << " " << (Track_.GMT_eta() >= 0 ? Track_.GMT_eta() : Track_.GMT_eta() + 512) << " "
+          << Track_.GMT_phi() << " " << Track_.GMT_charge() << " " << Track_.GMT_quality() << " " << Track_.Pt() << " " << Track_.Pt_dxy() << std::endl;
+        }
+
 
         if (!(res->at(iOut)).PtrSPCollection()->empty())
           if (SP_.TBIN() == (res->at(iOut)).PtrSPCollection()->at((res->at(iOut)).PtrSPCollection()->size() - 1).TBIN())
@@ -576,6 +585,23 @@ namespace l1t {
         //   // }
         //   std::cout << "***********************************************************\n\n" << std::endl;
         // }
+
+        std::cout << "-------------------------------" << std::endl;
+        std::cout << "Track UNP:" << std::endl;
+
+        // std::cout << "mode: " << Track_.Mode() << " phi_deltas: " << Track_.PtLUT().delta_ph[0] << " " << Track_.PtLUT().delta_ph[1] << " " << Track_.PtLUT().delta_ph[2] << " " << Track_.PtLUT().delta_ph[3]
+        // << " " << Track_.PtLUT().delta_ph[4] << " " << Track_.PtLUT().delta_ph[5] << " theta_deltas: " << Track_.PtLUT().delta_th[0] << " " << Track_.PtLUT().delta_th[1] << " " << Track_.PtLUT().delta_th[2]
+        // << " " << Track_.PtLUT().delta_th[3] << " " << Track_.PtLUT().delta_th[4] << " " << Track_.PtLUT().delta_th[5] << " track_phi: " << Track_.Phi_fp() << " track_theta: " << Track_.Theta_fp()
+        // << " address: " << Track_.PtLUT().address << std::endl;
+
+        // std::cout << "mode: " << Track_.Mode() << " ME 1: " << SP_.ME1_CSC_ID() << " ME 2: " << SP_.ME2_CSC_ID() << " ME 3: " << SP_.ME3_CSC_ID() << " ME 4: " << SP_.ME4_CSC_ID() << " track_phi: " << Track_.Phi_fp() << " track_theta: " << Track_.Theta_fp()
+        // << " GMT eta: " << SP_.Eta_GMT() << " address: " << Track_.PtLUT().address << std::endl;
+
+
+        std::cout << SP_.TBIN()-2 << " " << (Track_.Endcap() == 1 ? 1 : 2) << " " << Track_.Sector() << " " << Track_.PtLUT().address
+                  << " " << Track_.Mode() << " " << (Track_.GMT_eta() >= 0 ? Track_.GMT_eta() : Track_.GMT_eta() + 512) << " "
+                  << Track_.GMT_phi() << " " << Track_.GMT_charge() << " " << Track_.GMT_quality() << " " << Track_.Pt() << " " << Track_.Pt_dxy() << std::endl;
+        std::cout << "-------------------------------" << std::endl;
 
         (res->at(iOut)).push_SP(SP_);
 

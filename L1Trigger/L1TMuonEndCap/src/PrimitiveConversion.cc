@@ -764,7 +764,7 @@ void PrimitiveConversion::convert_gem(int pc_sector,
   int tp_station = tp_detId.station();
   int tp_ring = tp_detId.ring();
   int tp_roll = tp_detId.roll();
-  //int tp_layer     = tp_detId.layer();
+  int tp_layer     = tp_detId.layer();
   int tp_chamber = tp_detId.chamber();
 
   int tp_bx = tp_data.bx;
@@ -773,11 +773,25 @@ void PrimitiveConversion::convert_gem(int pc_sector,
   int tp_sector = emtf::get_trigger_sector(tp_ring, tp_station, tp_chamber);
   int tp_csc_ID = emtf::get_trigger_csc_ID(tp_ring, tp_station, tp_chamber);
 
+  // std::cout << "Primitive conversion layer: " << tp_layer << std::endl;
   // station 1 --> subsector 1 or 2
   // station 2,3,4 --> subsector 0
   int tp_subsector = (tp_station != 1) ? 0 : ((tp_chamber % 6 > 2) ? 1 : 2);
 
   const bool is_neighbor = (pc_chamber == 12 || pc_chamber == 13);
+
+  int subsector_GEM;
+  
+  if (!is_neighbor) {
+    if ( tp_chamber % 6 != 1)
+      subsector_GEM = (tp_chamber - 2) % 6;
+    else
+      subsector_GEM = 5;
+  } else {
+    subsector_GEM = 6;
+  }
+  // std::cout << "Primitive conversion GEM tp_sector: " << tp_sector << " tp_chamber: " << tp_chamber << " csc_ID: " << tp_csc_ID  << " neighbor: " << is_neighbor << " subsector_GEM: " << subsector_GEM << std::endl; 
+
 
   int csc_nID = tp_csc_ID;  // modify csc_ID if coming from neighbor sector
   if (is_neighbor) {
@@ -829,6 +843,8 @@ void PrimitiveConversion::convert_gem(int pc_sector,
   conv_hit.set_time(0.);  // No fine resolution timing
   //conv_hit.set_alct_quality  ( tp_data.alct_quality );
   //conv_hit.set_clct_quality  ( tp_data.clct_quality );
+  conv_hit.set_layer(tp_layer);
+  conv_hit.set_subsector_GEM(subsector_GEM);
 
   conv_hit.set_neighbor(is_neighbor);
   conv_hit.set_sector_idx((endcap_ == 1) ? sector_ - 1 : sector_ + 5);

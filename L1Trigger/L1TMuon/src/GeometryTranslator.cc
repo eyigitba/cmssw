@@ -183,8 +183,11 @@ double GeometryTranslator::calcME0SpecificBend(const TriggerPrimitive& tp) const
 // _____________________________________________________________________________
 // GEM
 GlobalPoint GeometryTranslator::getGEMSpecificPoint(const TriggerPrimitive& tp) const {
+  // std::cout << "GeometryTranslator: " << std::endl;
   const GEMDetId id(tp.detId<GEMDetId>());
+  // std::cout << "GEMDetId: " << id << std::endl;
   const GEMEtaPartition* roll = _geogem->etaPartition(id);
+  // std::cout << "pad_low: " << tp.getGEMData().pad_low << " pad_hi: " << tp.getGEMData().pad_hi << std::endl;
   assert(roll != nullptr);  // failed to get GEM roll
   //const uint16_t pad = tp.getGEMData().pad;
   // Use half-pad precision, + 0.5 at the end to get the center of the pad (pad starts from 0)

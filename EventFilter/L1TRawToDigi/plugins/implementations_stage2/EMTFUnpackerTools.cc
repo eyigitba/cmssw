@@ -72,9 +72,9 @@ namespace l1t {
         _hit.set_sector_idx(_endcap == 1 ? _evt_sector - 1 : _evt_sector + 5);
 
         _hit.set_pad(_GEM.Pad());
-        _hit.set_pad_hi(_GEM.Pad() + (_GEM.ClusterSize() - 1));
+        _hit.set_pad_hi(_GEM.Pad() + _GEM.ClusterSize()); // GEM cluster size is encoded as 0-7 in firmware. EY
         _hit.set_pad_low(_GEM.Pad());
-        _hit.set_partition(_GEM.Partition());
+        _hit.set_partition(8 - _GEM.Partition());
         // TODO: verify layer naming is 0/1 and not 1/2
         _hit.set_layer(_GEM.ClusterID() < GEM_MAX_CLUSTERS_PER_LAYER ? 0 : 1);
         _hit.set_cluster_size(_GEM.ClusterSize());

@@ -174,6 +174,8 @@ namespace l1t {
         res_hit = static_cast<EMTFCollections*>(coll)->getEMTFHits();
         EMTFHit Hit_;
 
+        EMTFHit Hit_neighbor_;
+
         CSCCorrelatedLCTDigiCollection* res_LCT;
         res_LCT = static_cast<EMTFCollections*>(coll)->getEMTFLCTs();
 
@@ -183,6 +185,7 @@ namespace l1t {
         ////////////////////////////
         // Unpack the ME Data Record
         ////////////////////////////
+        // std::cout << "ME hit to unpack!!!" << std::endl;
 
         // Run 3 has a different EMTF DAQ output format
         // Computed as (Year - 2000)*2^9 + Month*2^5 + Day (see Block.cc and EMTFBlockTrailers.cc)
@@ -224,8 +227,10 @@ namespace l1t {
             convert_ME_location(ME_.Station(), ME_.CSC_ID(), (res->at(iOut)).PtrEventHeader()->Sector(), csc_ID_shift);
 
         Hit_.set_station(conv_vals.at(0));
+        Hit_.set_pc_station(conv_vals.at(0));
         Hit_.set_csc_ID(conv_vals.at(1));
         Hit_.set_sector(conv_vals.at(2));
+        Hit_.set_pc_sector(conv_vals.at(2));
         Hit_.set_subsector(conv_vals.at(3));
         Hit_.set_neighbor(conv_vals.at(4));
         Hit_.set_ring(L1TMuonEndCap::calc_ring(Hit_.Station(), Hit_.CSC_ID(), ME_.Strip()));
@@ -306,10 +311,34 @@ namespace l1t {
                               ME_.HMT_outOfTime() == -99 ? 0 : ME_.HMT_outOfTime(),
                               Hit_.CSC_DetId());
 
+        Hit_.set_hmt(ME_.HMT_inTime() == -99 ? 0 : ME_.HMT_inTime());
+        Hit_.set_subsector((Hit_.Station() != 1) ? 0 : ((Hit_.Chamber() % 6 > 2) ? 1 : 2));
+        Hit_.set_pc_chamber(Hit_.CSC_ID() - 1);
         // Set the stub number for this hit
         // Each chamber can send up to 2 stubs per BX
         ME_.set_stub_num(0);
         Hit_.set_stub_num(0);
+
+        // if (ME_.Station() == 5){
+        //   Hit_neighbor_ = Hit_;
+        //   Hit_neighbor_.set_sector((res->at(iOut)).PtrEventHeader()->Sector());
+        //   Hit_neighbor_.set_pc_sector((res->at(iOut)).PtrEventHeader()->Sector());
+        //   Hit_neighbor_.set_pc_station(ME_.Station());
+        //   Hit_neighbor_.set_station(ME_.Station());
+        //   std::cout << "creating hit neighbor" << std::endl;
+        //   int bx = 0;
+        //   int endcap = (Hit_neighbor_.Endcap() == 1) ? 1 : 2;
+        //   int sector = Hit_neighbor_.Sector();
+        //   int station = Hit_neighbor_.Station();
+        //   int chamber = Hit_neighbor_.Chamber();
+        //   int strip = (Hit_neighbor_.Station() == 1 && Hit_neighbor_.Ring() == 4 && Hit_neighbor_.Strip() < 128) ? Hit_neighbor_.Strip() + 128 : Hit_neighbor_.Strip();  // ME1/1a
+        //   int wire = Hit_neighbor_.Wire();
+        //   int valid = 1;
+        //   std::cout << "-------------------------------" << std::endl;
+        //   std::cout << bx << " " << endcap << " " << sector << " " << Hit_neighbor_.Subsector() << " " << station << " "
+        //             << valid << " " << Hit_neighbor_.Quality() << " " << Hit_neighbor_.Pattern() << " " << wire << " " << chamber << " "
+        //             << Hit_neighbor_.Slope() << " " << strip << " " << 2*Hit_neighbor_.Strip_quart_bit() + Hit_neighbor_.Strip_eighth_bit() << " " << Hit_neighbor_.Bend() << std::endl;
+        // }
         // See if matching hit is already in event record: exact duplicate, or from neighboring sector
         bool exact_duplicate = false;
         bool neighbor_duplicate = false;
@@ -335,9 +364,47 @@ namespace l1t {
                                       << Hit_.Chamber() << ", strip " << Hit_.Strip() << ", wire " << Hit_.Wire()
                                       << std::endl;
 
+        int bx = 0;
+        int endcap = (Hit_.Endcap() == 1) ? 1 : 2;
+        int sector = Hit_.Sector();
+        int station = Hit_.Station();
+        int chamber = Hit_.Chamber();
+        int strip = (Hit_.Station() == 1 && Hit_.Ring() == 4 && Hit_.Strip() < 128) ? Hit_.Strip() + 128 : Hit_.Strip();  // ME1/1a
+        int wire = Hit_.Wire();
+        int valid = 1;
+        std::cout << "-------------------------------" << std::endl;
+        std::cout << "CSC Unpacked at BX: " << ME_.TBIN() - 2  << "ME station: " << ME_.Station() << " neighbor?: " << Hit_.Neighbor() << std::endl;
+        std::cout << bx << " " << endcap << " " << sector << " " << Hit_.Subsector() << " " << station << " "
+                  << valid << " " << Hit_.Quality() << " " << Hit_.Pattern() << " " << wire << " " << chamber << " "
+                  << Hit_.Slope() << " " << strip << " " << 2*Hit_.Strip_quart_bit() + Hit_.Strip_eighth_bit() << " " << Hit_.Bend() << std::endl;
+        std::cout << "hit phi: " << Hit_.Phi_fp() << " theta: " << Hit_.Theta_fp() << " zone hit: " << Hit_.Zone_hit() << " zone code: " << Hit_.Zone_code()
+        << " phi loc:" << Hit_.Phi_loc() << " phi glob: " << Hit_.Phi_glob() << " theta: " << Hit_.Theta() << std::endl;
+
+        bool is_in_sector = false;
+        int sector_idx = (Hit_.Endcap() == 1 ? Hit_.PC_sector() - 1 : Hit_.PC_sector() + 5);
+        if (Hit_.Sector_idx() == sector_idx)
+          is_in_sector = true;
+
         (res->at(iOut)).push_ME(ME_);
-        if (!exact_duplicate && Hit_.Valid() == 1)
+        // if (!exact_duplicate && !neighbor_duplicate && Hit_.Valid() == 1)
+        if (!exact_duplicate && is_in_sector && Hit_.Valid() == 1)
           res_hit->push_back(Hit_);
+        // if (!exact_duplicate && Hit_.Valid() == 1 && ME_.Station() == 5){
+        //   res_hit->push_back(Hit_neighbor_);
+        //   std::cout << "writing out hit neighbor" << std::endl;
+        //   int bx = 0;
+        //   int endcap = (Hit_neighbor_.Endcap() == 1) ? 1 : 2;
+        //   int sector = Hit_neighbor_.Sector();
+        //   int station = Hit_neighbor_.Station();
+        //   int chamber = Hit_neighbor_.Chamber();
+        //   int strip = (Hit_neighbor_.Station() == 1 && Hit_neighbor_.Ring() == 4 && Hit_neighbor_.Strip() < 128) ? Hit_neighbor_.Strip() + 128 : Hit_neighbor_.Strip();  // ME1/1a
+        //   int wire = Hit_neighbor_.Wire();
+        //   int valid = 1;
+        //   std::cout << "-------------------------------" << std::endl;
+        //   std::cout << bx << " " << endcap << " " << sector << " " << Hit_neighbor_.Subsector() << " " << station << " "
+        //             << valid << " " << Hit_neighbor_.Quality() << " " << Hit_neighbor_.Pattern() << " " << wire << " " << chamber << " "
+        //             << Hit_neighbor_.Slope() << " " << strip << " " << 2*Hit_neighbor_.Strip_quart_bit() + Hit_neighbor_.Strip_eighth_bit() << " " << Hit_neighbor_.Bend() << std::endl;
+        // }
         if (!exact_duplicate && !neighbor_duplicate &&
             Hit_.Valid() == 1)  // Don't write duplicate LCTs from adjacent sectors
           res_LCT->insertDigi(Hit_.CSC_DetId(), Hit_.CreateCSCCorrelatedLCTDigi(isRun3));

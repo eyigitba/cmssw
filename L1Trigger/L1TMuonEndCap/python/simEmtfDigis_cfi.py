@@ -20,7 +20,7 @@ simEmtfDigisMC = cms.EDProducer("L1TMuonEndCapTrackProducer",
     Era = cms.string('Run2_2018'),
 
     # New Run 3 CSC TPs using CCLUT algorithm
-    UseRun3CCLUT_OTMB = cms.bool(False),
+    UseRun3CCLUT_OTMB = cms.bool(True),
     UseRun3CCLUT_TMB  = cms.bool(False),
 
     # Input collections
@@ -43,7 +43,7 @@ simEmtfDigisMC = cms.EDProducer("L1TMuonEndCapTrackProducer",
     RPCEnable = cms.bool(True),   # Use clustered RPC hits from CPPF in track-building
     IRPCEnable = cms.bool(False),
     CPPFEnable = cms.bool(False), # Use CPPF-emulated clustered RPC hits from CPPF as the RPC hits
-    GEMEnable = cms.bool(False),  # Use hits from GEMs in track-building
+    GEMEnable = cms.bool(True),  # Use hits from GEMs in track-building
     ME0Enable = cms.bool(False),
 
     # BX

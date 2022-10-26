@@ -231,6 +231,7 @@ TriggerPrimitive::TriggerPrimitive(const GEMDetId& detid, const GEMPadDigiCluste
   _gem.pad_low = digi.pads().front();
   _gem.pad_hi = digi.pads().front() + digi.pads().size() - 1;
   _gem.bx = digi.bx();
+
 }
 
 // _____________________________________________________________________________

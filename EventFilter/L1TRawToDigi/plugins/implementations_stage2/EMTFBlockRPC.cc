@@ -148,6 +148,7 @@ namespace l1t {
         ////////////////////////////
         // Unpack the RPC Data Record
         ////////////////////////////
+        // std::cout << "RPC hit to unpack!!!" << std::endl;
 
         RPC_.set_phi(GetHexBits(RPCa, 0, 10));
 
@@ -189,6 +190,7 @@ namespace l1t {
         Hit_.set_station(_station);
         Hit_.set_ring(_ring);
         Hit_.set_sector(_sector);
+        Hit_.set_pc_sector(_sector);
         Hit_.set_subsector(_subsector_csc);
         Hit_.set_sector_RPC(_sector_rpc);
         Hit_.set_subsector_RPC(_subsector_rpc);
@@ -230,8 +232,26 @@ namespace l1t {
                                       << Hit_.Chamber() << ", theta " << Hit_.Theta_fp() / 4 << ", phi "
                                       << Hit_.Phi_fp() / 4 << std::endl;
 
+        // int bx = -1;
+        // int endcap = (Hit_.Endcap() == 1) ? 1 : 2;
+        // int sector = Hit_.Sector();
+        // int station = Hit_.Station();
+        // int chamber = Hit_.Chamber();
+        // int strip = (Hit_.Phi_fp() / 4);
+        // int wire = (Hit_.Theta_fp() / 4);
+        // int valid = 2;  // this marks RPC stub
+        // // std::cout << bx << " " << endcap << " " << sector << " " << 0 << " " << station << " " << valid << " "
+        //           // << 0 << " " << 0 << " " << wire << " " << chamber << " " << 0 << " " << strip << std::endl;
+        // std::cout << "-------------------------------" << std::endl;
+        // std::cout << "RPC Unpacked at BX: " << RPC_.TBIN() - 2 << std::endl;
+        // std::cout << bx << " " << endcap << " " << sector << " " << 0 << " " << station << " " << valid << " "
+        //           << 0 << " " << 0 << " " << wire << " " << chamber << " " << 0 << " " << strip << std::endl;
+        // std::cout << "hit_phi: " << Hit_.Phi_fp() << " theta: " << Hit_.Theta_fp() << " zone_hit: " << Hit_.Zone_hit() << " zone_code: " << Hit_.Zone_code()
+        // << " phi_loc:" << Hit_.Phi_loc() << " phi_glob: " << Hit_.Phi_glob() << " theta: " << Hit_.Theta() << std::endl;
+
+
         (res->at(iOut)).push_RPC(RPC_);
-        if (!exact_duplicate)
+        // if (!exact_duplicate)
           res_hit->push_back(Hit_);
         if (!exact_duplicate)
           res_CPPF->push_back(Hit_.CreateCPPFDigi());

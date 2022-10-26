@@ -11,15 +11,17 @@ namespace emtf {
     constexpr int MAX_TRIGSECTOR = 6;
 
     for (int endcap = MIN_ENDCAP; endcap <= MAX_ENDCAP; ++endcap) {
+    // for (int endcap = 1; endcap <= 1; ++endcap) {
       for (int sector = MIN_TRIGSECTOR; sector <= MAX_TRIGSECTOR; ++sector) {
+      // for (int sector = 2; sector <= 2; ++sector) {
         const int es = (endcap - MIN_ENDCAP) * (MAX_TRIGSECTOR - MIN_TRIGSECTOR + 1) + (sector - MIN_TRIGSECTOR);
 
         // _____________________________________________________________________
         // This prints the hits as raw text input to the firmware simulator
         // "12345" is the BX separator
 
-        std::cout << "==== Endcap " << endcap << " Sector " << sector << " Hits ====" << std::endl;
-        std::cout << "bx e s ss st vf ql cp wg id bd hs" << std::endl;
+        // std::cout << "==== Endcap " << endcap << " Sector " << sector << " Hits ====" << std::endl;
+        // std::cout << "bx e s ss st vf ql cp wg id bd hs" << std::endl;
 
         bool empty_sector = true;
         for (const auto& h : out_hits) {
@@ -36,17 +38,29 @@ namespace emtf {
               if (h.BX() != ibx)
                 continue;
 
-              int bx = 1;
+              int bx = 0;
               int endcap = (h.Endcap() == 1) ? 1 : 2;
               int sector = h.PC_sector();
               int station = (h.PC_station() == 0 && h.Subsector() == 1) ? 1 : h.PC_station();
               int chamber = h.PC_chamber() + 1;
-              int strip = (h.Station() == 1 && h.Ring() == 4) ? h.Strip() + 128 : h.Strip();  // ME1/1a
+              int strip = (h.Station() == 1 && h.Ring() == 4 && h.Strip() < 128) ? h.Strip() + 128 : h.Strip();  // ME1/1a
               int wire = h.Wire();
               int valid = 1;
-              std::cout << bx << " " << endcap << " " << sector << " " << h.Subsector() << " " << station << " "
+              int hmt = h.HMT() == -99 ? 0 : h.HMT();
+              int bend = h.Bend() == 1 ? 1 : 0;
+              // std::cout << bx << " " << endcap << " " << sector << " " << h.Subsector() << " " << station << " "
+              //           << valid << " " << h.Quality() << " " << h.Pattern() << " " << wire << " " << chamber << " "
+              //           << h.Bend() << " " << strip << std::endl;
+              int qs_es = h.Strip_quart_bit()*2+h.Strip_eighth_bit();
+
+              int slope = h.Slope() > 100 ? 0 : h.Slope();
+              // std::cout << "-------------------------------" << std::endl;
+              // std::cout << "CSC with sector IDX: " << h.Sector_idx() << std::endl;
+              std::cout << hmt << " " << endcap << " " << sector << " " << h.Subsector() << " " << station << " "
                         << valid << " " << h.Quality() << " " << h.Pattern() << " " << wire << " " << chamber << " "
-                        << h.Bend() << " " << strip << std::endl;
+                        << slope << " " << strip << " " << 2*h.Strip_quart_bit() + h.Strip_eighth_bit() << " " << bend << std::endl;
+              std::cout << "hit_phi: " << h.Phi_fp() << " theta: " << h.Theta_fp() << " zone_hit: " << h.Zone_hit() << " zone_code: " << h.Zone_code()
+              << " phi_loc:" << h.Phi_loc() << " phi_glob: " << h.Phi_glob() << " theta: " << h.Theta() << std::endl;
 
             } else if (h.Subsystem() == L1TMuon::kRPC) {
               if (h.Sector_idx() != es)
@@ -68,7 +82,7 @@ namespace emtf {
                 rpc_chm = 2 + (h.Station() - 3) * 2 + (h.Ring() - 2);
               }
 
-              int bx = 1;
+              int bx = 0;
               int endcap = (h.Endcap() == 1) ? 1 : 2;
               int sector = h.PC_sector();
               int station = rpc_sub;
@@ -76,8 +90,36 @@ namespace emtf {
               int strip = (h.Phi_fp() >> 2);
               int wire = (h.Theta_fp() >> 2);
               int valid = 2;  // this marks RPC stub
+              // std::cout << "-------------------------------" << std::endl;
+              // std::cout << "RPC emulated at BX: " << h.BX() << std::endl;
+              // std::cout << bx << " " << endcap << " " << sector << " " << 0 << " " << station << " " << valid << " "
+                        // << 0 << " " << 0 << " " << wire << " " << chamber << " " << 0 << " " << strip << std::endl;
               std::cout << bx << " " << endcap << " " << sector << " " << 0 << " " << station << " " << valid << " "
-                        << 0 << " " << 0 << " " << wire << " " << chamber << " " << 0 << " " << strip << std::endl;
+                        << 0 << " " << 0 << " " << wire << " " << chamber << " " << 0 << " " << strip << " " << 0 << " " << 0 << std::endl;
+              // std::cout << "hit_phi: " << h.Phi_fp() << " theta: " << h.Theta_fp() << " zone_hit: " << h.Zone_hit() << " zone_code: " << h.Zone_code()
+              // << " phi_loc:" << h.Phi_loc() << " phi_glob: " << h.Phi_glob() << " theta: " << h.Theta() << std::endl;
+            } else if (h.Subsystem() == L1TMuon::kGEM) {
+              if (h.Sector_idx() != es)
+                continue;
+              if (h.BX() != ibx)
+                continue;
+
+              int bx = 0;
+              int endcap = (h.Endcap() == 1) ? 1 : 2;
+              int sector = h.PC_sector();
+              int station = h.Subsector_GEM();
+              int chamber = h.Layer();
+              int strip = h.Pad();  // GE1/1
+              int wire = h.Partition();
+              int valid = 3;
+              // std::cout << "-------------------------------" << std::endl;
+              // std::cout << "RPC emulated at BX: " << h.BX() << std::endl;
+              // std::cout << bx << " " << endcap << " " << sector << " " << 0 << " " << station << " " << valid << " "
+                        // << 0 << " " << 0 << " " << wire << " " << chamber << " " << 0 << " " << strip << std::endl;
+              std::cout << bx << " " << endcap << " " << sector << " " << 0 << " " << station << " " << valid << " "
+                        << 0 << " " << 0 << " " << wire << " " << chamber << " " << 0 << " " << strip << " " << 0 << " " << 0 << std::endl;
+              // std::cout << "hit_phi: " << h.Phi_fp() << " theta: " << h.Theta_fp() << " zone_hit: " << h.Zone_hit() << " zone_code: " << h.Zone_code()
+              // << " phi_loc:" << h.Phi_loc() << " phi_glob: " << h.Phi_glob() << " theta: " << h.Theta() << std::endl;
             }
           }  // end loop over hits
 
@@ -87,16 +129,31 @@ namespace emtf {
         // _____________________________________________________________________
         // This prints the tracks as raw text output from the firmware simulator
 
-        std::cout << "==== Endcap " << endcap << " Sector " << sector << " Tracks ====" << std::endl;
-        std::cout << "bx e s a mo et ph cr q pt" << std::endl;
+        // std::cout << "==== Endcap " << endcap << " Sector " << sector << " Tracks ====" << std::endl;
+        // std::cout << "bx e s a mo et ph cr q pt" << std::endl;
 
         for (const auto& t : out_tracks) {
           if (t.Sector_idx() != es)
             continue;
 
-          std::cout << t.BX() << " " << (t.Endcap() == 1 ? 1 : 2) << " " << t.Sector() << " " << t.PtLUT().address
+          std::cout << "-------------------------------" << std::endl;
+          std::cout << "Track EMU:" << std::endl;
+
+          // std::cout << "mode: " << t.Mode() << " phi_deltas: " << t.PtLUT().delta_ph[0] << " " << t.PtLUT().delta_ph[1] << " " << t.PtLUT().delta_ph[2] << " " << t.PtLUT().delta_ph[3]
+          // << " " << t.PtLUT().delta_ph[4] << " " << t.PtLUT().delta_ph[5] << " phi_delta_signs: " << t.PtLUT().sign_ph[0] << " " << t.PtLUT().sign_ph[1] << " " << t.PtLUT().sign_ph[2]
+          // << " " << t.PtLUT().sign_ph[3] << " " << t.PtLUT().sign_ph[4] << " " << t.PtLUT().sign_ph[5] << " theta_deltas: " << t.PtLUT().delta_th[0] << " " << t.PtLUT().delta_th[1]
+          // << " " << t.PtLUT().delta_th[2] << " " << t.PtLUT().delta_th[3] << " " << t.PtLUT().delta_th[4] << " " << t.PtLUT().delta_th[5] << " track_phi: " << t.Phi_fp() 
+          // << " track_theta: " << t.Theta_fp() << " CLCT_pattern: " << t.PtLUT().cpattern[0] << " " << t.PtLUT().cpattern[1] << " " << t.PtLUT().cpattern[2] << " " << t.PtLUT().cpattern[3]
+          // << " address: " << t.PtLUT().address << std::endl;
+
+
+          std::cout << "Track: " << t.BX() << " " << (t.Endcap() == 1 ? 1 : 2) << " " << t.Sector() << " " << t.PtLUT().address
                     << " " << t.Mode() << " " << (t.GMT_eta() >= 0 ? t.GMT_eta() : t.GMT_eta() + 512) << " "
-                    << t.GMT_phi() << " " << t.GMT_charge() << " " << t.GMT_quality() << " " << t.Pt() << std::endl;
+                    << t.GMT_phi() << " " << t.GMT_charge() << " " << t.GMT_quality() << " " << t.Pt() << " " << t.Pt_dxy() << std::endl;
+          std::cout << "-------------------------------" << std::endl;
+          // std::cout << t.BX() << " " << (t.Endcap() == 1 ? 1 : 2) << " " << t.Sector() << " " << t.PtLUT().address
+          //           << " " << t.Mode() << " " << (t.GMT_eta() >= 0 ? t.GMT_eta() : t.GMT_eta() + 512) << " "
+          //           << t.GMT_phi() << " " << t.GMT_charge() << " " << t.GMT_quality() << " " << t.Pt() << std::endl;
         }  // end loop over tracks
 
       }  // end loop over sector
