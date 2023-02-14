@@ -11,25 +11,36 @@ if 'unitTest=True' in sys.argv:
 #--------------------------------------------------
 # Event Source and Condition
 
-if unitTest:
-    process.load("DQM.Integration.config.unittestinputsource_cfi")
-    from DQM.Integration.config.unittestinputsource_cfi import options
-else:
-    # Live Online DQM in P5
-    process.load("DQM.Integration.config.inputsource_cfi")
-    from DQM.Integration.config.inputsource_cfi import options
+# if unitTest:
+#     process.load("DQM.Integration.config.unittestinputsource_cfi")
+#     from DQM.Integration.config.unittestinputsource_cfi import options
+# else:
+#     # Live Online DQM in P5
+#     process.load("DQM.Integration.config.inputsource_cfi")
+#     from DQM.Integration.config.inputsource_cfi import options
 
 # Testing in lxplus
-#process.load("DQM.Integration.config.fileinputsource_cfi")
-#from DQM.Integration.config.fileinputsource_cfi import options
+process.load("DQM.Integration.config.fileinputsource_cfi")
+from DQM.Integration.config.fileinputsource_cfi import options
 
 # Required to load Global Tag
 process.load("DQM.Integration.config.FrontierCondition_GT_cfi")
-
+# from Configuration.AlCa.GlobalTag import GlobalTag
+# process.GlobalTag = GlobalTag(process.GlobalTag, '124X_dataRun3_v9', '')
 # required for EMTF emulator
 process.load('Configuration.StandardSequences.MagneticField_cff')
 # Required to load EcalMappingRecord
 process.load("Configuration.StandardSequences.GeometryRecoDB_cff")
+# process.load('Configuration.StandardSequences.GeometryDB_cff')
+
+# process.load('Configuration.StandardSequences.Reconstruction_cff')
+
+# process.load('Configuration.StandardSequences.FrontierConditions_GlobalTag_cff')
+# process.load('Configuration.StandardSequences.Services_cff')
+
+# process.load('FWCore.MessageService.MessageLogger_cfi')
+
+# process.load('Configuration.EventContent.EventContent_cff')
 
 #--------------------------------------------------
 # DQM Environment
@@ -93,11 +104,11 @@ process.load("DQM.L1TMonitor.L1TStage2Emulator_cff")
 
 process.l1tEmulatorMonitorPath = cms.Path(
     process.Stage2L1HardwareValidation +
-    process.l1tStage2EmulatorOnlineDQM +
-    process.hltFatEventFilter +
+    process.l1tStage2EmulatorOnlineDQM
+    # process.hltFatEventFilter +
 #    process.selfFatEventFilter +
-    process.Stage2L1HardwareValidationForValidationEvents +
-    process.l1tStage2EmulatorOnlineDQMValidationEvents
+    # process.Stage2L1HardwareValidationForValidationEvents +
+    # process.l1tStage2EmulatorOnlineDQMValidationEvents
     )
 
 # To get L1 conditions that are not in GlobalTag / O2O yet
@@ -171,7 +182,7 @@ if (process.runType.getRunType() == process.runType.hi_run):
 process.schedule = cms.Schedule(
     process.rawToDigiPath,
     process.l1tEmulatorMonitorPath,
-    process.l1tStage2EmulatorMonitorClientPath,
+    # process.l1tStage2EmulatorMonitorClientPath,
     process.dqmEndPath
 )
 

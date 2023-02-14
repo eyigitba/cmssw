@@ -414,20 +414,19 @@ void l1t::GlobalBoard::receiveMuonShowerObjectData(edm::Event& iEvent,
           /* Important here to split up the single object into 4 separate MuonShower
              bits for the global board. This is because the UTM library considers those bits separate as well
            */
-          l1t::MuonShower mus0;
-          l1t::MuonShower mus1;
-          l1t::MuonShower musOutOfTime0;
-          l1t::MuonShower musOutOfTime1;
+          l1t::MuonShower* mus0 = new l1t::MuonShower(false, false, false, false, false, false);
+          l1t::MuonShower* mus1 = new l1t::MuonShower(false, false, false, false, false, false);
+          l1t::MuonShower* musOutOfTime0 = new l1t::MuonShower(false, false, false, false, false, false);
+          l1t::MuonShower* musOutOfTime1 = new l1t::MuonShower(false, false, false, false, false, false);
 
-          mus0.setMus0(mu->mus0());
-          mus1.setMus1(mu->mus1());
-          musOutOfTime0.setMusOutOfTime0(mu->musOutOfTime0());
-          musOutOfTime1.setMusOutOfTime1(mu->musOutOfTime1());
-
-          (*m_candL1MuShower).push_back(0, &mus0);
-          (*m_candL1MuShower).push_back(0, &mus1);
-          (*m_candL1MuShower).push_back(0, &musOutOfTime0);
-          (*m_candL1MuShower).push_back(0, &musOutOfTime1);
+          mus0->setMus0(mu->mus0());
+          mus1->setMus1(mu->mus1());
+          musOutOfTime0->setMusOutOfTime0(mu->musOutOfTime0());
+          musOutOfTime1->setMusOutOfTime1(mu->musOutOfTime1());
+          (*m_candL1MuShower).push_back(0, &(*mus0));
+          (*m_candL1MuShower).push_back(0, &(*mus1));
+          (*m_candL1MuShower).push_back(0, &(*musOutOfTime0));
+          (*m_candL1MuShower).push_back(0, &(*musOutOfTime1));
         } else {
           edm::LogWarning("L1TGlobal") << " Too many Muon Showers (" << nObj
                                        << ") for uGT Configuration maxMuShower =" << nrL1MuShower << std::endl;

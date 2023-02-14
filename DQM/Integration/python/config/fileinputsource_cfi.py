@@ -30,7 +30,7 @@ options.register('runUniqueKey',
     "Unique run key from RCMS for Frontier")
 
 options.register('runNumber',
-                 286520,
+                 362720,
                  VarParsing.VarParsing.multiplicity.singleton,
                  VarParsing.VarParsing.varType.int,
                  "Run number. This run number has to be present in the dataset configured with the dataset option.")
@@ -67,46 +67,56 @@ options.register('noDB',
 
 options.parseArguments()
 
-try:
-  # fixed dataset, DAS 'py' snippet
-  from dataset_cfi import readFiles, secFiles
-  print("Using filenames from dataset_cfi.py.")
-except:
-  if options.dataset == 'auto':
-    print("Querying DAS for a dataset...")
-    import subprocess
-    out = subprocess.check_output("dasgoclient --query 'dataset run=%d dataset=/*Express*/*/*FEVT*'" % options.runNumber, shell=True)
-    dataset = out.splitlines()[-1]
-    print("Using dataset=%s." % dataset)
-  else:
-    dataset = options.dataset
+# try:
+#   # fixed dataset, DAS 'py' snippet
+#   from dataset_cfi import readFiles, secFiles
+#   print("Using filenames from dataset_cfi.py.")
+# except:
+#   if options.dataset == 'auto':
+#     print("Querying DAS for a dataset...")
+#     import subprocess
+#     out = subprocess.check_output("dasgoclient --query 'dataset run=%d dataset=/*Express*/*/*FEVT*'" % options.runNumber, shell=True)
+#     dataset = out.splitlines()[-1]
+#     print("Using dataset=%s." % dataset)
+#   else:
+#     dataset = options.dataset
 
-  print("Querying DAS for files...")
-  readFiles = cms.untracked.vstring()
-  secFiles = cms.untracked.vstring()
-  # this outputs all results, which can be a lot...
-  read, sec = filesFromDASQuery("file run=%d dataset=%s" % (options.runNumber, dataset), option=" --limit 10000 ")
-  readFiles.extend(read)
-  secFiles.extend(sec)
+#   print("Querying DAS for files...")
+#   readFiles = cms.untracked.vstring()
+#   secFiles = cms.untracked.vstring()
+#   # this outputs all results, which can be a lot...
+#   read, sec = filesFromDASQuery("file run=%d dataset=%s" % (options.runNumber, dataset), option=" --limit 10000 ")
+#   readFiles.extend(read)
+#   secFiles.extend(sec)
 
-print("Got %d files." % len(readFiles))
+# print("Got %d files." % len(readFiles))
 
-runstr = str(options.runNumber)
-runpattern = "*" + runstr[0:3] + "/" + runstr[3:] + "*"
-readFiles = cms.untracked.vstring([f for f in readFiles if fnmatch.fnmatch(f, runpattern)])
-secFiles = cms.untracked.vstring([f for f in secFiles if fnmatch.fnmatch(f, runpattern)])
-lumirange =  cms.untracked.VLuminosityBlockRange(
-  [ str(options.runNumber) + ":" + str(ls) 
-      for ls in range(options.minLumi, options.maxLumi+1)
-      if fnmatch.fnmatch(str(ls), options.lumiPattern)
-  ]
+# runstr = str(options.runNumber)
+# runpattern = "*" + runstr[0:3] + "/" + runstr[3:] + "*"
+# readFiles = cms.untracked.vstring([f for f in readFiles if fnmatch.fnmatch(f, runpattern)])
+# secFiles = cms.untracked.vstring([f for f in secFiles if fnmatch.fnmatch(f, runpattern)])
+# lumirange =  cms.untracked.VLuminosityBlockRange(
+#   [ str(options.runNumber) + ":" + str(ls) 
+#       for ls in range(options.minLumi, options.maxLumi+1)
+#       if fnmatch.fnmatch(str(ls), options.lumiPattern)
+#   ]
+# )
+
+# print("Selected %d files and %d LS." % (len(readFiles), len(lumirange)))
+
+# source = cms.Source ("PoolSource",fileNames = readFiles, secondaryFileNames = secFiles, lumisToProcess = lumirange)
+
+source = cms.Source("PoolSource",
+
+  fileNames = cms.untracked.vstring("/store/data/Run2022G/EphemeralHLTPhysics0/RAW/v1/000/362/720/00000/36f350d4-8e8a-4e38-b399-77ad9bf351dc.root"),
+#   eventsToProcess = cms.untracked.VEventRange("362720:116217472-362720:116217473"),
+
+
 )
 
-print("Selected %d files and %d LS." % (len(readFiles), len(lumirange)))
 
-source = cms.Source ("PoolSource",fileNames = readFiles, secondaryFileNames = secFiles, lumisToProcess = lumirange)
 maxEvents = cms.untracked.PSet(
-    input = cms.untracked.int32(-1)
+    input = cms.untracked.int32(1000)
 )
 
 # Fix to allow scram to compile

@@ -114,14 +114,31 @@ const bool l1t::MuonShowerCondition::evaluateCondition(const int bxEval) const {
   // index is always zero, as they are global quantities (there is only one object)
   int indexObj = 0;
 
-  objectsInComb.push_back(indexObj);
-  (combinationsInCond()).push_back(objectsInComb);
+  bool tmpResult = false;
 
+  bool passCondition = false;
+
+  // objectsInComb.push_back(indexObj);
+
+  for (int i = 0; i < numberObjects; i++) {
+    passCondition = checkObjectParameter(0, *(candVec->at(useBx, index[i])), index[i]);  //BLW Change for BXVector
+    tmpResult |= passCondition;
+    if (passCondition){
+      LogDebug("MuonShowerCondition") << "===> MuShowerCondition::evaluateCondition, CONGRATS!! This muon passed the condition."
+                            << std::endl;
+      objectsInComb.push_back(indexObj);
+    }
+    else
+      LogDebug("MuonShowerCondition") << "===> MuShowerCondition::evaluateCondition, FAIL!! This muon failed the condition."
+                            << std::endl;
+  }
   // if we get here all checks were successfull for this combination
   // set the general result for evaluateCondition to "true"
+  (combinationsInCond()).push_back(objectsInComb);
 
-  condResult = true;
-  return condResult;
+  // condResult = true;
+  // return condResult;
+  return tmpResult;
 }
 
 // load muon candidates

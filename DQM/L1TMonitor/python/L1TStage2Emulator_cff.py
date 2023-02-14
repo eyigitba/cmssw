@@ -120,6 +120,7 @@ from L1Trigger.L1TGlobal.simGtExtFakeProd_cfi import simGtExtFakeProd
 valGtStage2Digis = simGtStage2Digis.clone(
     ExtInputTag = "gtStage2Digis",
     MuonInputTag = "gtStage2Digis:Muon",
+    MuonShowerInputTag = "gmtStage2Digis:MuonShower",
     EGammaInputTag = "gtStage2Digis:EGamma",
     TauInputTag = "gtStage2Digis:Tau",
     JetInputTag = "gtStage2Digis:Jet",
@@ -132,16 +133,16 @@ valGtStage2Digis = simGtStage2Digis.clone(
     AlgoBlkInputTag = "gtStage2Digis"
 )
 Stage2L1HardwareValidation = cms.Sequence(
-    valCaloStage2Layer1Digis +
-    valCscStage2Digis +
-    valBmtfDigis +
-    valKBmtfStubs +
-    valKBmtfDigis +
-    valBmtfAlgoSel +
-    valOmtfDigis +
-    valEmtfStage2Digis +
-    valGmtCaloSumDigis +
-    valGmtStage2Digis +
+    # valCaloStage2Layer1Digis +
+    # valCscStage2Digis +
+    # valBmtfDigis +
+    # valKBmtfStubs +
+    # valKBmtfDigis +
+    # valBmtfAlgoSel +
+    # valOmtfDigis +
+    # valEmtfStage2Digis +
+    # valGmtCaloSumDigis +
+    # valGmtStage2Digis +
     valGtStage2Digis
 )
 
@@ -149,8 +150,8 @@ from Configuration.Eras.Modifier_run3_GEM_cff import run3_GEM
 _run3_Stage2L1HardwareValidation = Stage2L1HardwareValidation.copy()
 run3_GEM.toReplaceWith( Stage2L1HardwareValidation, cms.Sequence( valMuonGEMPadDigis + valMuonGEMPadDigiClusters + _run3_Stage2L1HardwareValidation) )
 
-_run3Shower_Stage2L1HardwareValidation = Stage2L1HardwareValidation.copy()
-run3_GEM.toReplaceWith( Stage2L1HardwareValidation, cms.Sequence(_run3Shower_Stage2L1HardwareValidation + valEmtfStage2Showers + valGmtShowerDigis) )
+# _run3Shower_Stage2L1HardwareValidation = Stage2L1HardwareValidation.copy()
+# run3_GEM.toReplaceWith( Stage2L1HardwareValidation, cms.Sequence(_run3Shower_Stage2L1HardwareValidation + valEmtfStage2Showers + valGmtShowerDigis) )
 
 Stage2L1HardwareValidationForValidationEvents = cms.Sequence(
     valCaloStage2Layer2Digis
@@ -195,14 +196,14 @@ from DQM.L1TMonitor.L1TdeStage2uGT_cfi import *
 
 # sequence to run for every event
 l1tStage2EmulatorOnlineDQM = cms.Sequence(
-    l1tdeStage2Bmtf +
-    l1tdeStage2BmtfSecond +
-    l1tdeStage2Omtf +
-    l1tdeCSCTPG +
-    l1tdeStage2EmtfOnlineDQMSeq +
-    l1tStage2uGMTEmulatorOnlineDQMSeq +
-    l1tdeStage2uGT +
-    l1tStage2uGtEmul
+    # l1tdeStage2Bmtf +
+    # l1tdeStage2BmtfSecond +
+    # l1tdeStage2Omtf +
+    # l1tdeCSCTPG +
+    # l1tdeStage2EmtfOnlineDQMSeq +
+    # l1tStage2uGMTEmulatorOnlineDQMSeq +
+    l1tdeStage2uGT
+    # l1tStage2uGtEmul
 )
 
 _run3_l1tStage2EmulatorOnlineDQM = l1tStage2EmulatorOnlineDQM.copy()
@@ -211,8 +212,8 @@ _run3_l1tStage2EmulatorOnlineDQM += l1tdeGEMTPG
 from Configuration.Eras.Modifier_run3_GEM_cff import run3_GEM
 run3_GEM.toReplaceWith( l1tStage2EmulatorOnlineDQM, _run3_l1tStage2EmulatorOnlineDQM )
 
-_run3shower_l1tStage2EmulatorOnlineDQM = l1tStage2EmulatorOnlineDQM.copy()
-run3_GEM.toReplaceWith( l1tStage2EmulatorOnlineDQM, cms.Sequence(_run3shower_l1tStage2EmulatorOnlineDQM + l1tdeCSCTPGShower) )
+# _run3shower_l1tStage2EmulatorOnlineDQM = l1tStage2EmulatorOnlineDQM.copy()
+# run3_GEM.toReplaceWith( l1tStage2EmulatorOnlineDQM, cms.Sequence(_run3shower_l1tStage2EmulatorOnlineDQM + l1tdeCSCTPGShower) )
 
 # sequence to run only for validation events
 l1tStage2EmulatorOnlineDQMValidationEvents = cms.Sequence(
