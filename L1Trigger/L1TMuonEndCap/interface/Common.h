@@ -68,7 +68,8 @@ namespace emtf {
   constexpr int NUM_FEATURES = 23;    // NN features
   constexpr int NUM_PREDICTIONS = 2;  // NN outputs
 
-  using Feature = std::array<float, NUM_FEATURES>;
+  // using Feature = std::array<float, NUM_FEATURES>;
+  using Feature = std::array<float, 29>;
   using Prediction = std::array<float, NUM_PREDICTIONS>;
 
 }  // namespace emtf
