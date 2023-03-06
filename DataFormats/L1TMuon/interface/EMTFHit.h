@@ -31,10 +31,12 @@ namespace l1t {
           station(-99),
           ring(-99),
           sector(-99),
+          unp_sector(-99),
           sector_RPC(-99),
           sector_idx(-99),
           subsector(-99),
           subsector_RPC(-99),
+          subsector_GEM(-99),
           chamber(-99),
           csc_ID(-99),
           csc_nID(-99),
@@ -53,6 +55,7 @@ namespace l1t {
           strip_eighth(-99),      // Run 3
           strip_quart_bit(-99),   // Run 3
           strip_eighth_bit(-99),  // Run 3
+          hmt(-99),  // Run 3
           track_num(-99),
           quality(-99),
           pattern(-99),
@@ -136,10 +139,12 @@ namespace l1t {
     void set_station(int bits) { station = bits; }
     void set_ring(int bits) { ring = bits; }
     void set_sector(int bits) { sector = bits; }
+    void set_unp_sector(int bits) { unp_sector = bits; }
     void set_sector_RPC(int bits) { sector_RPC = bits; }
     void set_sector_idx(int bits) { sector_idx = bits; }
     void set_subsector(int bits) { subsector = bits; }
     void set_subsector_RPC(int bits) { subsector_RPC = bits; }
+    void set_subsector_GEM(int bits) { subsector_GEM = bits; }
     void set_chamber(int bits) { chamber = bits; }
     void set_csc_ID(int bits) { csc_ID = bits; }
     void set_csc_nID(int bits) { csc_nID = bits; }
@@ -158,6 +163,7 @@ namespace l1t {
     void set_strip_eighth(int bits) { strip_eighth = bits; }          // Run 3
     void set_strip_quart_bit(int bits) { strip_quart_bit = bits; }    // Run 3
     void set_strip_eighth_bit(int bits) { strip_eighth_bit = bits; }  // Run 3
+    void set_hmt(int bits) { hmt = bits; }  // Run 3
     void set_track_num(int bits) { track_num = bits; }
     void set_quality(int bits) { quality = bits; }
     void set_pattern(int bits) { pattern = bits; }
@@ -204,10 +210,12 @@ namespace l1t {
     int Station() const { return station; }
     int Ring() const { return ring; }
     int Sector() const { return sector; }
+    int Unp_Sector() const { return unp_sector; }
     int Sector_RPC() const { return sector_RPC; }
     int Sector_idx() const { return sector_idx; }
     int Subsector() const { return subsector; }
     int Subsector_RPC() const { return subsector_RPC; }
+    int Subsector_GEM() const { return subsector_GEM; }
     int Chamber() const { return chamber; }
     int CSC_ID() const { return csc_ID; }
     int CSC_nID() const { return csc_nID; }
@@ -226,6 +234,7 @@ namespace l1t {
     int Strip_eighth() const { return strip_eighth; }          // Run 3
     int Strip_quart_bit() const { return strip_quart_bit; }    // Run 3
     int Strip_eighth_bit() const { return strip_eighth_bit; }  // Run 3
+    int HMT() const { return hmt; }  // Run 3
     int Track_num() const { return track_num; }
     int Quality() const { return quality; }
     int Pattern() const { return pattern; }
@@ -303,10 +312,12 @@ namespace l1t {
     int station;        ///<  1 -  4.
     int ring;  ///<  1 -  4.  ME1/1a is denoted as "Ring 4".  Should check dependence on input CSCDetId convention. - AWB 02.03.17
     int sector;      ///<  1 -  6.  CSC / GEM / EMTF sector convention: sector 1 starts at 15 degrees
+    int unp_sector;      ///<  1 -  6.  CSC / GEM / EMTF sector convention: sector 1 starts at 15 degrees
     int sector_RPC;  ///<  1 -  6.  RPC sector convention (in CMSSW): sector 1 starts at -5 degrees
     int sector_idx;  ///<  0 - 11.  0 - 5 for ME+, 6 - 11 for ME-.  For neighbor hits, set by EMTF sector that received it.
     int subsector;  ///<  0 -  6.  In CSCs, 1 or 2 for ME1, 0 for ME2/3/4.
     int subsector_RPC;  ///<  0 -  6.  RPC sector convention (in CMSSW): subsector 3 is the first chamber in the EMTF sector.
+    int subsector_GEM;  ///<  0 -  6.  GEM sector convention (in fw).
     int chamber;        ///<  1 - 36.  Chamber 1 starts at -5 degrees.
     int csc_ID;         ///<  1 -  9.  For CSCs only.
     int csc_nID;        ///<  1 - 15.  For CSCs only.  Neighbors 10 - 15, 12 not filled.
@@ -325,6 +336,7 @@ namespace l1t {
     int strip_eighth;      ///< Run 3 CSC parameters
     int strip_quart_bit;   ///< Run 3 CSC parameters
     int strip_eighth_bit;  ///< Run 3 CSC parameters
+    int hmt;               ///< Run 3 CSC parameters
     int track_num;         ///<  ? -  ?.  For CSCs only.  (Range? - AWB 02.03.17)
     int quality;           ///<  0 - 15.  For CSCs only.
     int pattern;           ///<  0 - 10.  For CSCs only.

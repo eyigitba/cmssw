@@ -94,6 +94,9 @@ namespace l1t {
     lct.setRun3Pattern(pattern_run3);
     lct.setRun3(isRun3);
 
+    // std::cout << "EMTF unpacked LCT with BX " << lct.getBX() << ", strip " << lct.getStrip() << ", wire " << lct.getKeyWG() << ", pat " << lct.getPattern() << std::endl;
+
+
     return lct;
     // Added Run 3 parameters - EY 04.07.22
     // Filling "trknmb" with 1 and "bx0" with 0 (as in MC).

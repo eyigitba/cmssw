@@ -19,7 +19,7 @@ namespace emtf {
         // "12345" is the BX separator
 
         std::cout << "==== Endcap " << endcap << " Sector " << sector << " Hits ====" << std::endl;
-        std::cout << "bx e s ss st vf ql cp wg id bd hs" << std::endl;
+        // std::cout << "bx e s ss st vf ql cp wg id bd hs" << std::endl;
 
         bool empty_sector = true;
         for (const auto& h : out_hits) {
@@ -36,22 +36,46 @@ namespace emtf {
               if (h.BX() != ibx)
                 continue;
 
-              int bx = 1;
+              // int bx = 1;
+              // int endcap = (h.Endcap() == 1) ? 1 : 2;
+              // int sector = h.PC_sector();
+              // int station = (h.PC_station() == 0 && h.Subsector() == 1) ? 1 : h.PC_station();
+              // int chamber = h.PC_chamber() + 1;
+              // int strip = (h.Station() == 1 && h.Ring() == 4) ? h.Strip() + 128 : h.Strip();  // ME1/1a
+              // int wire = h.Wire();
+              // int valid = 1;
+              // std::cout << bx << " " << endcap << " " << sector << " " << h.Subsector() << " " << station << " "
+              //           << valid << " " << h.Quality() << " " << h.Pattern() << " " << wire << " " << chamber << " "
+              //           << h.Bend() << " " << strip << std::endl;
+
+              int bx = 0;
               int endcap = (h.Endcap() == 1) ? 1 : 2;
               int sector = h.PC_sector();
               int station = (h.PC_station() == 0 && h.Subsector() == 1) ? 1 : h.PC_station();
               int chamber = h.PC_chamber() + 1;
-              int strip = (h.Station() == 1 && h.Ring() == 4) ? h.Strip() + 128 : h.Strip();  // ME1/1a
+              int strip = (h.Station() == 1 && h.Ring() == 4 && h.Strip() < 128) ? h.Strip() + 128 : h.Strip();  // ME1/1a
               int wire = h.Wire();
               int valid = 1;
-              std::cout << bx << " " << endcap << " " << sector << " " << h.Subsector() << " " << station << " "
+              int hmt = h.HMT() == -99 ? 0 : h.HMT();
+              int bend = h.Bend() == 1 ? 1 : 0;
+              int tbin = h.BX() + 3;
+              // std::cout << bx << " " << endcap << " " << sector << " " << h.Subsector() << " " << station << " "
+              //           << valid << " " << h.Quality() << " " << h.Pattern() << " " << wire << " " << chamber << " "
+              //           << h.Bend() << " " << strip << std::endl;
+              int qs_es = h.Strip_quart_bit()*2+h.Strip_eighth_bit();
+
+              int slope = h.Slope() > 100 ? 0 : h.Slope();
+              // std::cout << "-------------------------------" << std::endl;
+              // std::cout << "CSC with sector IDX: " << h.Sector_idx() << std::endl;
+              std::cout << tbin  << " " << hmt << " " << endcap << " " << sector << " " << h.Subsector() << " " << station << " "
                         << valid << " " << h.Quality() << " " << h.Pattern() << " " << wire << " " << chamber << " "
-                        << h.Bend() << " " << strip << std::endl;
+                        << slope << " " << strip << " " << 2*h.Strip_quart_bit() + h.Strip_eighth_bit() << " " << bend << std::endl;
 
             } else if (h.Subsystem() == L1TMuon::kRPC) {
               if (h.Sector_idx() != es)
                 continue;
-              if (h.BX() + 6 != ibx)
+              // if (h.BX() + 6 != ibx)
+              if (h.BX() != ibx)
                 continue;  // RPC hits should be supplied 6 BX later relative to CSC hits
 
               // Assign RPC link index. Code taken from src/PrimitiveSelection.cc
@@ -68,7 +92,7 @@ namespace emtf {
                 rpc_chm = 2 + (h.Station() - 3) * 2 + (h.Ring() - 2);
               }
 
-              int bx = 1;
+              int bx = 0;
               int endcap = (h.Endcap() == 1) ? 1 : 2;
               int sector = h.PC_sector();
               int station = rpc_sub;
@@ -76,9 +100,42 @@ namespace emtf {
               int strip = (h.Phi_fp() >> 2);
               int wire = (h.Theta_fp() >> 2);
               int valid = 2;  // this marks RPC stub
-              std::cout << bx << " " << endcap << " " << sector << " " << 0 << " " << station << " " << valid << " "
-                        << 0 << " " << 0 << " " << wire << " " << chamber << " " << 0 << " " << strip << std::endl;
+              int tbin = h.BX() + 3;
+              // std::cout << "-------------------------------" << std::endl;
+              // std::cout << "RPC emulated at BX: " << h.BX() << std::endl;
+              // std::cout << bx << " " << endcap << " " << sector << " " << 0 << " " << station << " " << valid << " "
+                        // << 0 << " " << 0 << " " << wire << " " << chamber << " " << 0 << " " << strip << std::endl;
+              std::cout << tbin << " " << bx << " " << endcap << " " << sector << " " << 0 << " " << station << " " << valid << " "
+                        << 0 << " " << 0 << " " << wire << " " << chamber << " " << 0 << " " << strip << " " << 0 << " " << 0 << std::endl;
+              // std::cout << "hit_phi: " << h.Phi_fp() << " theta: " << h.Theta_fp() << " zone_hit: " << h.Zone_hit() << " zone_code: " << h.Zone_code()
+              // << " phi_loc:" << h.Phi_loc() << " phi_glob: " << h.Phi_glob() << " theta: " << h.Theta() << std::endl;
+            } else if (h.Subsystem() == L1TMuon::kGEM) {
+              if (h.Sector_idx() != es)
+                continue;
+              if (h.BX() != ibx)
+                continue;
+
+              int bx = 0;
+              int endcap = (h.Endcap() == 1) ? 1 : 2;
+              int sector = h.PC_sector();
+              int station = h.Subsector_GEM();
+              int clusterSize = h.ClusterSize();
+              int chamber = h.Layer();
+              int strip = h.Pad();  // GE1/1
+              int wire = h.Partition();
+              int valid = 3;
+              int tbin = h.BX() + 3;
+              // std::cout << "-------------------------------" << std::endl;
+              // std::cout << "RPC emulated at BX: " << h.BX() << std::endl;
+              // std::cout << bx << " " << endcap << " " << sector << " " << 0 << " " << station << " " << valid << " "
+                        // << 0 << " " << 0 << " " << wire << " " << chamber << " " << 0 << " " << strip << std::endl;
+              std::cout << tbin << " " << bx << " " << endcap << " " << sector << " " << 0 << " " << station << " " << valid << " "
+                        << 0 << " " << clusterSize << " " << wire << " " << chamber << " " << 0 << " " << strip << " " << 0 << " " << 0 << std::endl;
+              // std::cout << "hit_phi: " << h.Phi_fp() << " theta: " << h.Theta_fp() << " zone_hit: " << h.Zone_hit() << " zone_code: " << h.Zone_code()
+              // << " phi_loc:" << h.Phi_loc() << " phi_glob: " << h.Phi_glob() << " theta: " << h.Theta() << std::endl;
             }
+
+            
           }  // end loop over hits
 
           std::cout << "12345" << std::endl;
@@ -88,7 +145,7 @@ namespace emtf {
         // This prints the tracks as raw text output from the firmware simulator
 
         std::cout << "==== Endcap " << endcap << " Sector " << sector << " Tracks ====" << std::endl;
-        std::cout << "bx e s a mo et ph cr q pt" << std::endl;
+        // std::cout << "bx e s a mo et ph cr q pt" << std::endl;
 
         for (const auto& t : out_tracks) {
           if (t.Sector_idx() != es)

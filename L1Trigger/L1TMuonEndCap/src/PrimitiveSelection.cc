@@ -39,7 +39,9 @@ void PrimitiveSelection::configure(int verbose,
   bxShiftME0_ = bxShiftME0;
 
   includeNeighbor_ = includeNeighbor;
+  // includeNeighbor_ = false;
   duplicateTheta_ = duplicateTheta;
+  // duplicateTheta_ = false;
   bugME11Dupes_ = bugME11Dupes;
 
   // Run 3 CCLUT algorithm

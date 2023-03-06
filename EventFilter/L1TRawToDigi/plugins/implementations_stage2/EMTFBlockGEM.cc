@@ -228,9 +228,12 @@ namespace l1t {
           // Define CSC-like subsector) // FIXME WHY?? VERIFY
           int _subsector_csc = (_station != 1) ? 0 : ((_chamber % 6 > 2) ? 1 : 2);
 
+          Hit_.set_subsector_GEM(GEM_.Link());
+
           Hit_.set_station(_station);
           Hit_.set_ring(_ring);
           Hit_.set_sector(_sector);
+          Hit_.set_pc_sector(_sector);
           Hit_.set_subsector(_subsector_csc);
           Hit_.set_chamber(_chamber);
           Hit_.set_neighbor(_neighbor);
@@ -278,10 +281,10 @@ namespace l1t {
           //                               << ", roll " << Hit_.Roll() << ", pad " << Hit_.Pad() << std::endl;
 
           (res->at(iOut)).push_GEM(GEM_);
-          if (!exact_duplicate)
+          if (!exact_duplicate && Hit_.Valid() == 1)
             res_hit->push_back(Hit_);
 
-          if (!exact_duplicate)
+          if (!exact_duplicate && Hit_.Valid() == 1)
             res_GEM->insertDigi(Hit_.GEM_DetId(), Hit_.CreateGEMPadDigiCluster());
 
           // Finished with unpacking one GEM Data Record

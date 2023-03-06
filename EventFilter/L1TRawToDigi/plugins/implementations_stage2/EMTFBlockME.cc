@@ -184,6 +184,17 @@ namespace l1t {
         // Unpack the ME Data Record
         ////////////////////////////
 
+        // std::cout << ">>> block to unpack <<<" << std::endl
+        //   << "hdr:  " << std::hex << std::setw(8) << std::setfill('0') << block.header().raw()
+        //   << std::dec << " (ID " << block.header().getID() << ", size " << block.header().getSize()
+        //   << ", CapID 0x" << std::hex << std::setw(2) << std::setfill('0') << block.header().getCapID()
+        //   << ")" << std::dec << std::endl;
+        // for (const auto& word : block.payload()) {
+        //     std::cout << "data: " << std::hex << std::setw(8) << std::setfill('0') << word << std::dec
+        //               << std::endl;
+        // }
+
+
         // Run 3 has a different EMTF DAQ output format
         // Computed as (Year - 2000)*2^9 + Month*2^5 + Day (see Block.cc and EMTFBlockTrailers.cc)
         bool run3_DAQ_format =
@@ -222,6 +233,9 @@ namespace l1t {
         // Computed as (Year - 2000)*2^9 + Month*2^5 + Day (see Block.cc and EMTFBlockTrailers.cc)
         std::vector<int> conv_vals =
             convert_ME_location(ME_.Station(), ME_.CSC_ID(), (res->at(iOut)).PtrEventHeader()->Sector(), csc_ID_shift);
+
+        Hit_.set_pc_station(conv_vals.at(0));
+        Hit_.set_pc_sector(conv_vals.at(2));
 
         Hit_.set_station(conv_vals.at(0));
         Hit_.set_csc_ID(conv_vals.at(1));
@@ -305,11 +319,15 @@ namespace l1t {
         CSCShowerDigi Shower_(ME_.HMT_inTime() == -99 ? 0 : ME_.HMT_inTime(),
                               ME_.HMT_outOfTime() == -99 ? 0 : ME_.HMT_outOfTime(),
                               Hit_.CSC_DetId());
+        Hit_.set_hmt(ME_.HMT_inTime() == -99 ? 0 : ME_.HMT_inTime());
+        Hit_.set_subsector((Hit_.Station() != 1) ? 0 : ((Hit_.Chamber() % 6 > 2) ? 1 : 2));
+        Hit_.set_pc_chamber(Hit_.CSC_ID() - 1);
 
         // Set the stub number for this hit
         // Each chamber can send up to 2 stubs per BX
         ME_.set_stub_num(0);
         Hit_.set_stub_num(0);
+        Hit_.set_unp_sector((res->at(iOut)).PtrEventHeader()->Sector());
         // See if matching hit is already in event record: exact duplicate, or from neighboring sector
         bool exact_duplicate = false;
         bool neighbor_duplicate = false;
@@ -337,6 +355,11 @@ namespace l1t {
                                       << std::endl;
           return true;
         }
+        // edm::LogWarning("EMTF") << "EMTF unpacked LCT in sector: " << (res->at(iOut)).PtrEventHeader()->Sector() << " with BX " << Hit_.BX() << ", endcap "
+        //                     << Hit_.Endcap() << ", station " << Hit_.Station() << ", sector " << Hit_.Sector()
+        //                     << ", neighbor " << Hit_.Neighbor() << ", ring " << Hit_.Ring() << ", chamber "
+        //                     << Hit_.Chamber() << ", strip " << Hit_.Strip() << ", wire " << Hit_.Wire()
+        //                     << std::endl;
 
         if (exact_duplicate)
           edm::LogWarning("L1T|EMTF") << "EMTF unpacked duplicate LCTs: BX " << Hit_.BX() << ", endcap "

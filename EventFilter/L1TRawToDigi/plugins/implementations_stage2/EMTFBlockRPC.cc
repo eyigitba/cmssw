@@ -223,6 +223,7 @@ namespace l1t {
           Hit_.set_station(_station);
           Hit_.set_ring(_ring);
           Hit_.set_sector(_sector);
+          Hit_.set_pc_sector(_sector);
           Hit_.set_subsector(_subsector_csc);
           Hit_.set_sector_RPC(_sector_rpc);
           Hit_.set_subsector_RPC(_subsector_rpc);
@@ -275,9 +276,9 @@ namespace l1t {
                                         << ", phi " << Hit_.Phi_fp() / 4 << std::endl;
 
           (res->at(iOut)).push_RPC(RPC_);
-          if (!exact_duplicate)
+          if (!exact_duplicate && Hit_.Valid() == 1)
             res_hit->push_back(Hit_);
-          if (!exact_duplicate)
+          if (!exact_duplicate && Hit_.Valid() == 1)
             res_CPPF->push_back(Hit_.CreateCPPFDigi());
         }
 
