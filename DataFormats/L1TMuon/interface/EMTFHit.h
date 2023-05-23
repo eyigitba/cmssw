@@ -14,6 +14,7 @@
 #include "DataFormats/MuonDetId/interface/ME0DetId.h"
 #include "DataFormats/MuonDetId/interface/DTChamberId.h"
 #include "DataFormats/CSCDigi/interface/CSCCorrelatedLCTDigi.h"
+#include "DataFormats/CSCDigi/interface/CSCShowerDigi.h"
 #include "DataFormats/GEMDigi/interface/GEMPadDigiCluster.h"
 #include "DataFormats/L1TMuon/interface/CPPFDigi.h"
 #include "DataFormats/L1TMuon/interface/L1TMuonSubsystems.h"
@@ -53,6 +54,9 @@ namespace l1t {
           strip_eighth(-99),      // Run 3
           strip_quart_bit(-99),   // Run 3
           strip_eighth_bit(-99),  // Run 3
+          hmt_valid(-99),         // Run 3 HMT
+          hmt_inTime(-99),        // Run 3 HMT
+          hmt_outOfTime(-99),     // Run 3 HMT
           track_num(-99),
           quality(-99),
           pattern(-99),
@@ -101,6 +105,8 @@ namespace l1t {
     CPPFDigi CreateCPPFDigi() const;
     // void ImportGEMPadDigiCluster (const GEMPadDigiCluster& _digi);  // TODO: implement placeholder when others are implemented
     GEMPadDigiCluster CreateGEMPadDigiCluster() const;
+    // Run 3 HMT
+    CSCShowerDigi CreateCSCShowerDigi() const;
 
     // void PrintSimulatorHeader() const;
     // void PrintForSimulator() const;
@@ -158,6 +164,9 @@ namespace l1t {
     void set_strip_eighth(int bits) { strip_eighth = bits; }          // Run 3
     void set_strip_quart_bit(int bits) { strip_quart_bit = bits; }    // Run 3
     void set_strip_eighth_bit(int bits) { strip_eighth_bit = bits; }  // Run 3
+    void set_hmt_valid(int bits) { hmt_valid = bits; }                // Run 3 HMT
+    void set_hmt_inTime(int bits) { hmt_inTime = bits; }              // Run 3 HMT
+    void set_hmt_outOfTime(int bits) { hmt_outOfTime = bits; }        // Run 3 HMT
     void set_track_num(int bits) { track_num = bits; }
     void set_quality(int bits) { quality = bits; }
     void set_pattern(int bits) { pattern = bits; }
@@ -226,6 +235,9 @@ namespace l1t {
     int Strip_eighth() const { return strip_eighth; }          // Run 3
     int Strip_quart_bit() const { return strip_quart_bit; }    // Run 3
     int Strip_eighth_bit() const { return strip_eighth_bit; }  // Run 3
+    int HMT_valid() const { return hmt_valid; }                // Run 3 HMT
+    int HMT_inTime() const { return hmt_inTime; }              // Run 3 HMT
+    int HMT_outOfTime() const { return hmt_outOfTime; }        // Run 3 HMT
     int Track_num() const { return track_num; }
     int Quality() const { return quality; }
     int Pattern() const { return pattern; }
@@ -325,6 +337,11 @@ namespace l1t {
     int strip_eighth;      ///< Run 3 CSC parameters
     int strip_quart_bit;   ///< Run 3 CSC parameters
     int strip_eighth_bit;  ///< Run 3 CSC parameters
+    // Run 3 HMT
+    int hmt_valid;
+    int hmt_inTime;
+    int hmt_outOfTime;
+    // End Run 3 HMT
     int track_num;         ///<  ? -  ?.  For CSCs only.  (Range? - AWB 02.03.17)
     int quality;           ///<  0 - 15.  For CSCs only.
     int pattern;           ///<  0 - 10.  For CSCs only.

@@ -113,4 +113,19 @@ namespace l1t {
     return GEMPadDigiCluster(pads, bx);
   }
 
+  CSCShowerDigi EMTFHit::CreateCSCShowerDigi() const {
+    CSCShowerDigi shower = CSCShowerDigi(hmt_inTime == -99 ? 0 : hmt_inTime,
+                                         hmt_outOfTime == -99 ? 0 : hmt_outOfTime,
+                                         csc_ID,
+                                         bx + CSCConstants::LCT_CENTRAL_BX,
+                                         CSCShowerDigi::ShowerType::kEMTFShower);
+
+    if (shower.isNominalInTime()) std::cout << "---------------- Unpacked Nominal shower bx: " << shower.getBX() << std::endl;
+    if (shower.isTightInTime()) std::cout << "---------------- Unpacked Tight shower bx: " << shower.getBX() << std::endl;
+
+
+    return shower;
+  }
+
+
 }  // End namespace l1t

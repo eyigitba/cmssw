@@ -236,6 +236,9 @@ namespace l1t {
         Hit_.set_neighbor(conv_vals.at(4));
         Hit_.set_ring(L1TMuonEndCap::calc_ring(Hit_.Station(), Hit_.CSC_ID(), ME_.Strip()));
 
+        // std::cout << "*********** CSC id from EMTF: " << conv_vals.at(1) << std::endl;
+
+
         if (Hit_.Station() < 1 || Hit_.Station() > 4)
           edm::LogWarning("L1T|EMTF") << "EMTF unpacked LCT station = " << Hit_.Station()
                                       << ", outside proper [1, 4] range" << std::endl;
@@ -308,11 +311,15 @@ namespace l1t {
         ImportME(Hit_, ME_, (res->at(iOut)).PtrEventHeader()->Endcap(), (res->at(iOut)).PtrEventHeader()->Sector());
 
         // Fill the CSCShowerDigi
-        CSCShowerDigi Shower_(ME_.HMT_inTime() == -99 ? 0 : ME_.HMT_inTime(),
-                              ME_.HMT_outOfTime() == -99 ? 0 : ME_.HMT_outOfTime(),
-                              Hit_.CSC_DetId(),
-                              Hit_.BX(),
-                              CSCShowerDigi::ShowerType::kEMTFShower);
+        // CSCShowerDigi Shower_(ME_.HMT_inTime() == -99 ? 0 : ME_.HMT_inTime(),
+        //                       ME_.HMT_outOfTime() == -99 ? 0 : ME_.HMT_outOfTime(),
+        //                       Hit_.CSC_DetId(),
+        //                       Hit_.BX(),
+        //                       CSCShowerDigi::ShowerType::kEMTFShower);
+
+        // if (Shower_.isNominalInTime()) std::cout << "---------------- Unpacked Nominal shower bx: " << Shower_.getBX() << std::endl;
+        // if (Shower_.isTightInTime()) std::cout << "---------------- Unpacked Tight shower bx: " << Shower_.getBX() << std::endl;
+
 
         // Set the stub number for this hit
         // Each chamber can send up to 2 stubs per BX
@@ -359,8 +366,8 @@ namespace l1t {
         if (!exact_duplicate && !neighbor_duplicate &&
             Hit_.Valid() == 1)  // Don't write duplicate LCTs from adjacent sectors
           res_LCT->insertDigi(Hit_.CSC_DetId(), Hit_.CreateCSCCorrelatedLCTDigi(isRun3));
-        if (ME_.HMV() == 1) {  // Only write when HMT valid bit is set to 1
-          res_shower->insertDigi(Hit_.CSC_DetId(), Shower_);
+        if (Hit_.HMT_valid() == 1) {  // Only write when HMT valid bit is set to 1
+          res_shower->insertDigi(Hit_.CSC_DetId(), Hit_.CreateCSCShowerDigi());
         }
         // Finished with unpacking one ME Data Record
         return true;

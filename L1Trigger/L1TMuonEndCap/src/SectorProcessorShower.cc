@@ -36,6 +36,8 @@ void SectorProcessorShower::process(const CSCShowerDigiCollection& in_showers,
 
         // shower is valid
         if (digi->isValid()) {
+          if (digi->isNominalInTime()) std::cout << "---------------- Nominal shower bx: " << digi->getBX() << std::endl;
+          if (digi->isTightInTime()) std::cout << "---------------- Tight shower bx: " << digi->getBX() << std::endl;
           selected_showers.emplace_back(*digi);
         }
       }

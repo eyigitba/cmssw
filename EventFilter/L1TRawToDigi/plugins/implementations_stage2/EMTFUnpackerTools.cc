@@ -27,6 +27,11 @@ namespace l1t {
         _hit.set_slope(_ME.Slope());
         _hit.set_pattern_run3(_ME.Run3_pattern());
 
+        // Run 3 HMT
+        _hit.set_hmt_inTime(_ME.HMT_inTime());
+        _hit.set_hmt_outOfTime(_ME.HMT_outOfTime());
+        _hit.set_hmt_valid(_ME.HMV());
+
         _hit.set_ring(L1TMuonEndCap::calc_ring(_hit.Station(), _hit.CSC_ID(), _hit.Strip()));
         _hit.set_chamber(
             L1TMuonEndCap::calc_chamber(_hit.Station(), _hit.Sector(), _hit.Subsector(), _hit.Ring(), _hit.CSC_ID()));
