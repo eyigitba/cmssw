@@ -224,6 +224,10 @@ def L1TReEmulFromRAW(process):
         DTDigi_Theta_Source = 'bmtfDigis'
     )
 
+    run3_GEM.toModify(process.simEmtfShowers,
+        CSCShowerInput = 'emtfStage2Digis',
+    )
+
     print("# L1TReEmul sequence:  ")
     print("# {0}".format(process.L1TReEmul))
     print("# {0}".format(process.schedule))

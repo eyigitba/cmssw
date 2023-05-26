@@ -308,11 +308,11 @@ namespace l1t {
         ImportME(Hit_, ME_, (res->at(iOut)).PtrEventHeader()->Endcap(), (res->at(iOut)).PtrEventHeader()->Sector());
 
         // Fill the CSCShowerDigi
-        CSCShowerDigi Shower_(ME_.HMT_inTime() == -99 ? 0 : ME_.HMT_inTime(),
-                              ME_.HMT_outOfTime() == -99 ? 0 : ME_.HMT_outOfTime(),
-                              Hit_.CSC_DetId(),
-                              Hit_.BX(),
-                              CSCShowerDigi::ShowerType::kEMTFShower);
+        // CSCShowerDigi Shower_(ME_.HMT_inTime() == -99 ? 0 : ME_.HMT_inTime(),
+        //                       ME_.HMT_outOfTime() == -99 ? 0 : ME_.HMT_outOfTime(),
+        //                       Hit_.CSC_DetId(),
+        //                       Hit_.BX(),
+        //                       CSCShowerDigi::ShowerType::kEMTFShower);
 
         // Set the stub number for this hit
         // Each chamber can send up to 2 stubs per BX
@@ -353,14 +353,17 @@ namespace l1t {
                                       << Hit_.Chamber() << ", strip " << Hit_.Strip() << ", wire " << Hit_.Wire()
                                       << std::endl;
 
+        if (Hit_.Quality() == 0)
+          Hit_.set_valid(0);
+        
         (res->at(iOut)).push_ME(ME_);
         if (!exact_duplicate && Hit_.Valid() == 1)
           res_hit->push_back(Hit_);
         if (!exact_duplicate && !neighbor_duplicate &&
             Hit_.Valid() == 1)  // Don't write duplicate LCTs from adjacent sectors
           res_LCT->insertDigi(Hit_.CSC_DetId(), Hit_.CreateCSCCorrelatedLCTDigi(isRun3));
-        if (ME_.HMV() == 1) {  // Only write when HMT valid bit is set to 1
-          res_shower->insertDigi(Hit_.CSC_DetId(), Shower_);
+        if (Hit_.HMT_valid() == 1) {  // Only write when HMT valid bit is set to 1
+          res_shower->insertDigi(Hit_.CSC_DetId(), Hit_.CreateCSCShowerDigi());
         }
         // Finished with unpacking one ME Data Record
         return true;
