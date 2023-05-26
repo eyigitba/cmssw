@@ -61,12 +61,17 @@ void PtAssignmentEngineDxy::preprocessing_dxy(const EMTFTrack& track, emtf::Feat
   // 4 RPC bits indicating if ME or RE hit was used in each station (S1, S2, S3, S4)
   // Total: 23 variables
   std::array<float, 6> x_dphi;
+  std::array<float, 6> x_dphi_sign;
   std::array<float, 6> x_dtheta;
+  std::array<float, 6> x_dtheta_sign;
   std::array<float, 4> x_bend_emtf;
   std::array<float, 1> x_fr_emtf;
   std::array<float, 1> x_trk_theta;
   std::array<float, 1> x_me11ring;
   std::array<float, 4> x_rpcbit;
+  std::array<float, 4> x_csc_pattern;
+  std::array<float, 1> x_trk_mode;
+
 
   // Initialize to zeros
   x_dphi.fill(0);
@@ -77,6 +82,7 @@ void PtAssignmentEngineDxy::preprocessing_dxy(const EMTFTrack& track, emtf::Feat
   x_trk_theta.fill(0);
   x_me11ring.fill(0);
   x_rpcbit.fill(0);
+  x_trk_mode.fill(0);
 
   EMTFPtLUT data = track.PtLUT();
 
@@ -91,7 +97,8 @@ void PtAssignmentEngineDxy::preprocessing_dxy(const EMTFTrack& track, emtf::Feat
   int rpc_1, rpc_2, rpc_3, rpc_4;
   int St1_ring2 = data.st1_ring2;
 
-  int pat1 = -99, pat2 = -99, pat3 = -99, pat4 = -99;
+  // int pat1 = -99, pat2 = -99, pat3 = -99, pat4 = -99;
+  int pat1 = 0, pat2 = 0, pat3 = 0, pat4 = 0;
 
   // // Which stations have hits
   int st1 = (track.Mode() >= 8);
@@ -100,14 +107,19 @@ void PtAssignmentEngineDxy::preprocessing_dxy(const EMTFTrack& track, emtf::Feat
   int st4 = ((track.Mode() % 2) == 1);
 
   // Get valid pattern values
-  if (st1)
+  // if (st1)
     pat1 = data.cpattern[0];
-  if (st2)
+  // if (st2)
     pat2 = data.cpattern[1];
-  if (st3)
+  // if (st3)
     pat3 = data.cpattern[2];
-  if (st4)
+  // if (st4)
     pat4 = data.cpattern[3];
+
+  x_csc_pattern[0] = pat1;
+  x_csc_pattern[1] = pat2;
+  x_csc_pattern[2] = pat3;
+  x_csc_pattern[3] = pat4;
 
   // F/R bit
   fr_1 = data.fr[0];
@@ -144,63 +156,74 @@ void PtAssignmentEngineDxy::preprocessing_dxy(const EMTFTrack& track, emtf::Feat
   if (std::abs(bend_4) == 5 && rpc_4 == 1)
     bend_4 = 0;
 
-  // Calculate delta phi
-  dPhi_12 = (data.delta_ph[0] != invalid_dphi) ? data.delta_ph[0] * (data.sign_ph[0] ? 1 : -1) : 0;
-  dPhi_13 = (data.delta_ph[1] != invalid_dphi) ? data.delta_ph[1] * (data.sign_ph[1] ? 1 : -1) : 0;
-  dPhi_14 = (data.delta_ph[2] != invalid_dphi) ? data.delta_ph[2] * (data.sign_ph[2] ? 1 : -1) : 0;
-  dPhi_23 = (data.delta_ph[3] != invalid_dphi) ? data.delta_ph[3] * (data.sign_ph[3] ? 1 : -1) : 0;
-  dPhi_24 = (data.delta_ph[4] != invalid_dphi) ? data.delta_ph[4] * (data.sign_ph[4] ? 1 : -1) : 0;
-  dPhi_34 = (data.delta_ph[5] != invalid_dphi) ? data.delta_ph[5] * (data.sign_ph[5] ? 1 : -1) : 0;
+  dPhi_12 = data.delta_ph[0];
+  dPhi_13 = data.delta_ph[1];
+  dPhi_14 = data.delta_ph[2];
+  dPhi_23 = data.delta_ph[3];
+  dPhi_24 = data.delta_ph[4];
+  dPhi_34 = data.delta_ph[5];
 
   // Calculate delta theta
-  dTh_12 = (data.delta_th[0] != invalid_dtheta) ? data.delta_th[0] * (data.sign_th[0] ? 1 : -1) : 0;
-  dTh_13 = (data.delta_th[1] != invalid_dtheta) ? data.delta_th[1] * (data.sign_th[1] ? 1 : -1) : 0;
-  dTh_14 = (data.delta_th[2] != invalid_dtheta) ? data.delta_th[2] * (data.sign_th[2] ? 1 : -1) : 0;
-  dTh_23 = (data.delta_th[3] != invalid_dtheta) ? data.delta_th[3] * (data.sign_th[3] ? 1 : -1) : 0;
-  dTh_24 = (data.delta_th[4] != invalid_dtheta) ? data.delta_th[4] * (data.sign_th[4] ? 1 : -1) : 0;
-  dTh_34 = (data.delta_th[5] != invalid_dtheta) ? data.delta_th[5] * (data.sign_th[5] ? 1 : -1) : 0;
+  dTh_12 = data.delta_th[0];
+  dTh_13 = data.delta_th[1];
+  dTh_14 = data.delta_th[2];
+  dTh_23 = data.delta_th[3];
+  dTh_24 = data.delta_th[4];
+  dTh_34 = data.delta_th[5];
+
+  x_dphi_sign[0] = data.sign_ph[0];
+  x_dphi_sign[1] = data.sign_ph[1];
+  x_dphi_sign[2] = data.sign_ph[2];
+  x_dphi_sign[3] = data.sign_ph[3];
+  x_dphi_sign[4] = data.sign_ph[4];
+  x_dphi_sign[5] = data.sign_ph[5];
+
+  x_dtheta_sign[0] = data.sign_th[0];
+  x_dtheta_sign[1] = data.sign_th[1];
+  x_dtheta_sign[2] = data.sign_th[2];
+  x_dtheta_sign[3] = data.sign_th[3];
+  x_dtheta_sign[4] = data.sign_th[4];
+  x_dtheta_sign[5] = data.sign_th[5];
 
   // Set dPhi and dTheta values to 0 if there was no hit in the station
   if (!st1) {
-    dPhi_12 = 0;
-    dPhi_13 = 0;
-    dPhi_14 = 0;
+    dPhi_12 = invalid_dphi;
+    dPhi_13 = invalid_dphi;
+    dPhi_14 = invalid_dphi;
 
-    dTh_12 = 0;
-    dTh_13 = 0;
-    dTh_14 = 0;
+    dTh_12 = invalid_dtheta;
+    dTh_13 = invalid_dtheta;
+    dTh_14 = invalid_dtheta;
   }
   if (!st2) {
-    dPhi_12 = 0;
-    dPhi_23 = 0;
-    dPhi_24 = 0;
+    dPhi_12 = invalid_dphi;
+    dPhi_23 = invalid_dphi;
+    dPhi_24 = invalid_dphi;
 
-    dTh_12 = 0;
-    dTh_23 = 0;
-    dTh_24 = 0;
+    dTh_12 = invalid_dtheta;
+    dTh_23 = invalid_dtheta;
+    dTh_24 = invalid_dtheta;
   }
   if (!st3) {
-    dPhi_13 = 0;
-    dPhi_23 = 0;
-    dPhi_34 = 0;
+    dPhi_13 = invalid_dphi;
+    dPhi_23 = invalid_dphi;
+    dPhi_34 = invalid_dphi;
 
-    dTh_13 = 0;
-    dTh_23 = 0;
-    dTh_34 = 0;
+    dTh_13 = invalid_dtheta;
+    dTh_23 = invalid_dtheta;
+    dTh_34 = invalid_dtheta;
   }
   if (!st4) {
-    dPhi_14 = 0;
-    dPhi_24 = 0;
-    dPhi_34 = 0;
+    dPhi_14 = invalid_dphi;
+    dPhi_24 = invalid_dphi;
+    dPhi_34 = invalid_dphi;
 
-    dTh_14 = 0;
-    dTh_24 = 0;
-    dTh_34 = 0;
+    dTh_14 = invalid_dtheta;
+    dTh_24 = invalid_dtheta;
+    dTh_34 = invalid_dtheta;
   }
 
   // Set NN inputs
-
-  // NN was trained with the wrong sign convention. TO BE CHANGED LATER!
   x_dphi[0] = dPhi_12;
   x_dphi[1] = dPhi_13;
   x_dphi[2] = dPhi_14;
@@ -208,7 +231,6 @@ void PtAssignmentEngineDxy::preprocessing_dxy(const EMTFTrack& track, emtf::Feat
   x_dphi[4] = dPhi_24;
   x_dphi[5] = dPhi_34;
 
-  // NN was trained with the wrong sign convention. TO BE CHANGED LATER!
   x_dtheta[0] = dTh_12;
   x_dtheta[1] = dTh_13;
   x_dtheta[2] = dTh_14;
@@ -216,7 +238,6 @@ void PtAssignmentEngineDxy::preprocessing_dxy(const EMTFTrack& track, emtf::Feat
   x_dtheta[4] = dTh_24;
   x_dtheta[5] = dTh_34;
 
-  // NN was trained with the wrong sign convention. TO BE CHANGED LATER!
   x_bend_emtf[0] = bend_1;
   x_bend_emtf[1] = bend_2;
   x_bend_emtf[2] = bend_3;
@@ -225,6 +246,7 @@ void PtAssignmentEngineDxy::preprocessing_dxy(const EMTFTrack& track, emtf::Feat
   x_fr_emtf[0] = fr_1;
   x_trk_theta[0] = track.Theta_fp();
   x_me11ring[0] = St1_ring2;
+  x_trk_mode[0] = track.Mode();
 
   x_rpcbit[0] = rpc_1;
   x_rpcbit[1] = rpc_2;
@@ -232,9 +254,10 @@ void PtAssignmentEngineDxy::preprocessing_dxy(const EMTFTrack& track, emtf::Feat
   x_rpcbit[3] = rpc_4;
 
   feature = {{x_dphi[0],      x_dphi[1],      x_dphi[2],      x_dphi[3],      x_dphi[4],    x_dphi[5],
+              x_dphi_sign[0],      x_dphi_sign[1],      x_dphi_sign[2],      x_dphi_sign[3],      x_dphi_sign[4],    x_dphi_sign[5],
               x_dtheta[0],    x_dtheta[1],    x_dtheta[2],    x_dtheta[3],    x_dtheta[4],  x_dtheta[5],
-              x_bend_emtf[0], x_bend_emtf[1], x_bend_emtf[2], x_bend_emtf[3], x_fr_emtf[0], x_trk_theta[0],
-              x_me11ring[0],  x_rpcbit[0],    x_rpcbit[1],    x_rpcbit[2],    x_rpcbit[3]}};
+              x_dtheta_sign[0],    x_dtheta_sign[1],    x_dtheta_sign[2],    x_dtheta_sign[3],    x_dtheta_sign[4],  x_dtheta_sign[5],
+              x_csc_pattern[0],    x_csc_pattern[1],    x_csc_pattern[2],    x_csc_pattern[3], x_trk_theta[0]}};
   return;
 }
 
@@ -249,14 +272,8 @@ void PtAssignmentEngineDxy::call_tensorflow_dxy(const emtf::Feature& feature, em
   emtf_assert(outputs.size() == 1);
   emtf_assert(prediction.size() == emtf::NUM_PREDICTIONS);
 
-  const float reg_pt_scale = 100.0;  // a scale factor applied to regression during training
-  const float reg_dxy_scale = 1.0;   // a scale factor applied to regression during training
-
   prediction.at(0) = outputs[0].matrix<float>()(0, 0);
   prediction.at(1) = outputs[0].matrix<float>()(0, 1);
 
-  // Remove scale factor used during training
-  prediction.at(0) /= reg_pt_scale;
-  prediction.at(1) /= reg_dxy_scale;
   return;
 }
