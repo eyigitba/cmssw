@@ -19,6 +19,7 @@ void SectorProcessorLUT::read(bool pc_lut_data, int pc_lut_version) {
                       << (pc_lut_data ? "data" : "MC");
 
   std::string coord_lut_dir = "";
+  std::cout << "pc_lut_version: " << pc_lut_version << std::endl;
   if (pc_lut_version == 0)
     coord_lut_dir = "ph_lut_v1";  // All year 2016
   else if (pc_lut_version == 1)
@@ -27,7 +28,7 @@ void SectorProcessorLUT::read(bool pc_lut_data, int pc_lut_version) {
     coord_lut_dir = "ph_lut_v3_data";  // Update in September 2017 from ReReco alignment, data only
   else if (pc_lut_version == 3 && pc_lut_data)
     coord_lut_dir = "ph_lut_Run3_2022_data";  // Update in October 2022 from Run 3 2022 alignment, data only
-  else if (pc_lut_version == 2)
+  else if (pc_lut_version >= 2)
     coord_lut_dir = "ph_lut_v2";  // MC still uses ideal CMS aligment
   else if (pc_lut_version == -1 && pc_lut_data)
     coord_lut_dir = "ph_lut_v3_data";  // September 2017 data LCT alignment, but use local CPPF LUTs for RPC
