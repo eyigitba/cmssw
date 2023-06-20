@@ -38,16 +38,16 @@ from DQM.L1TMonitor.L1TStage2uGT_cff import *
 
 # sequence to run for every event
 l1tStage2OnlineDQM = cms.Sequence(
-    l1tStage2CaloLayer1 +
-    l1tStage2CaloLayer2 +
-    l1tStage2BmtfOnlineDQMSeq +
-    l1tStage2Omtf +
+    # l1tStage2CaloLayer1 +
+    # l1tStage2CaloLayer2 +
+    # l1tStage2BmtfOnlineDQMSeq +
+    # l1tStage2Omtf +
     l1tStage2Emtf +
-    l1tStage2Cppf +
-    l1tStage2RegionalShower +  
-    l1tStage2uGMTOnlineDQMSeq +
-    l1tObjectsTiming +
-    l1tStage2uGTOnlineDQMSeq
+    # l1tStage2Cppf +
+    l1tStage2RegionalShower 
+    # l1tStage2uGMTOnlineDQMSeq +
+    # l1tObjectsTiming +
+    # l1tStage2uGTOnlineDQMSeq
 )
 
 # sequence to run only for validation events

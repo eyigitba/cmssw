@@ -11,17 +11,17 @@ if 'unitTest=True' in sys.argv:
 #--------------------------------------------------
 # Event Source and Condition
 
-if unitTest:
-    process.load("DQM.Integration.config.unittestinputsource_cfi")
-    from DQM.Integration.config.unittestinputsource_cfi import options
-else:
-    # Live Online DQM in P5
-    process.load("DQM.Integration.config.inputsource_cfi")
-    from DQM.Integration.config.inputsource_cfi import options
+# if unitTest:
+#     process.load("DQM.Integration.config.unittestinputsource_cfi")
+#     from DQM.Integration.config.unittestinputsource_cfi import options
+# else:
+#     # Live Online DQM in P5
+#     process.load("DQM.Integration.config.inputsource_cfi")
+#     from DQM.Integration.config.inputsource_cfi import options
 
 # # Testing in lxplus
-# process.load("DQM.Integration.config.fileinputsource_cfi")
-# from DQM.Integration.config.fileinputsource_cfi import options
+process.load("DQM.Integration.config.fileinputsource_cfi")
+from DQM.Integration.config.fileinputsource_cfi import options
 # process.load("FWCore.MessageLogger.MessageLogger_cfi")
 # process.MessageLogger.cerr.FwkReport.reportEvery = 1
 
@@ -91,10 +91,10 @@ process.selfFatEventFilter = cms.EDFilter("HLTL1NumberFilter",
 process.load("DQM.L1TMonitor.L1TStage2_cff")
 
 process.l1tMonitorPath = cms.Path(
-    process.l1tStage2OnlineDQM +
-    process.hltFatEventFilter +
+    process.l1tStage2OnlineDQM
+    # process.hltFatEventFilter +
 #    process.selfFatEventFilter +
-    process.l1tStage2OnlineDQMValidationEvents
+    # process.l1tStage2OnlineDQMValidationEvents
 )
 
 # Remove DQM Modules
@@ -170,7 +170,7 @@ if (process.runType.getRunType() == process.runType.hi_run):
 process.schedule = cms.Schedule(
     process.rawToDigiPath,
     process.l1tMonitorPath,
-    process.l1tStage2MonitorClientPath,
+    # process.l1tStage2MonitorClientPath,
 #    process.l1tMonitorEndPath,
     process.dqmEndPath
 )
