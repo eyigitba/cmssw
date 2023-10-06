@@ -116,6 +116,8 @@ void L1Analysis::L1AnalysisL1Upgrade::SetMuon(const l1t::MuonBxCollection& muon,
         l1upgrade_.muonDxy.push_back(it->hwDXY());
         l1upgrade_.muonTfMuonIdx.push_back(it->tfMuonIndex());
         l1upgrade_.muonBx.push_back(ibx);
+        l1upgrade_.muonKalmanRank.push_back(it->hwKalmanRank());
+        l1upgrade_.muonKalmanChi2.push_back(it->hwKalmanChi2());
         l1upgrade_.nMuons++;
       }
     }

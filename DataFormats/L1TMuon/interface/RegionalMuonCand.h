@@ -53,6 +53,8 @@ namespace l1t {
           m_hwSign(0),
           m_hwSignValid(0),
           m_hwQuality(0),
+          m_hwRank(0),
+          m_hwChi2(0),
           m_dataword(0) {
       setTFIdentifiers(0, bmtf);
     };
@@ -67,6 +69,8 @@ namespace l1t {
           m_hwSign(sign),
           m_hwSignValid(signvalid),
           m_hwQuality(quality),
+          m_hwRank(0),
+          m_hwChi2(0),
           m_dataword(0) {
       setTFIdentifiers(processor, trackFinder);
       // set default track addresses
@@ -115,6 +119,8 @@ namespace l1t {
           m_hwSign(sign),
           m_hwSignValid(signvalid),
           m_hwQuality(quality),
+          m_hwRank(0),
+          m_hwChi2(0),
           m_trackAddress(trackAddress),
           m_dataword(0) {
       setTFIdentifiers(processor, trackFinder);
@@ -138,6 +144,8 @@ namespace l1t {
     void setHwSignValid(int bits) { m_hwSignValid = bits; };
     /// Set compressed quality code as transmitted by hardware (4 bits)
     void setHwQual(int bits) { m_hwQuality = bits; };
+    void setHwRank(int bits) { m_hwRank = bits; };
+    void setHwChi2(int bits) { m_hwChi2 = bits; };
     /// Set HF (halo / fine eta) bit (EMTF: halo -> 1; BMTF: fine eta -> 1)
     void setHwHF(bool bit) { m_hwHF = bit; };
     /// Set the processor ID, track-finder type. From these two, the link is set
@@ -175,6 +183,8 @@ namespace l1t {
     const int hwSignValid() const { return m_hwSignValid; };
     /// Get quality code
     const int hwQual() const { return m_hwQuality; };
+    const int hwRank() const { return m_hwRank; };
+    const int hwChi2() const { return m_hwChi2; };
     /// Get link on which the MicroGMT receives the candidate
     const int link() const { return m_link; };
     /// Get muon index (i.e., 0, 1, or 2)
@@ -213,6 +223,8 @@ namespace l1t {
     int m_hwSign;
     int m_hwSignValid;
     int m_hwQuality;
+    int m_hwRank;
+    int m_hwChi2;
     int m_link;
     int m_processor;
     tftype m_trackFinder;

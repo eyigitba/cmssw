@@ -30,6 +30,8 @@ namespace L1Analysis {
       tfMuonTrAdd.clear();
       tfMuonDecodedTrAdd.clear();
       tfMuonHwTrAdd.clear();
+      tfMuonHwRank.clear();
+      tfMuonHwChi2.clear();
     }
 
     unsigned short int nTfMuons;
@@ -51,6 +53,8 @@ namespace L1Analysis {
     std::vector<short int> tfMuonTrAdd;
     std::vector<std::map<std::string, int>> tfMuonDecodedTrAdd;
     std::vector<short int> tfMuonHwTrAdd;
+    std::vector<short int> tfMuonHwRank;
+    std::vector<short int> tfMuonHwChi2;
   };
 }  // namespace L1Analysis
 #endif

@@ -15,6 +15,8 @@ void L1Analysis::L1AnalysisL1UpgradeTfMuon::SetTfMuon(const l1t::RegionalMuonCan
         if (isRun3_) {
           l1upgradetfmuon_.tfMuonHwPtUnconstrained.push_back(it->hwPtUnconstrained());
           l1upgradetfmuon_.tfMuonHwDxy.push_back(it->hwDXY());
+          l1upgradetfmuon_.tfMuonHwRank.push_back(it->hwRank());
+          l1upgradetfmuon_.tfMuonHwChi2.push_back(it->hwChi2());
         }
         l1upgradetfmuon_.tfMuonHwEta.push_back(it->hwEta());
         l1upgradetfmuon_.tfMuonHwPhi.push_back(it->hwPhi());

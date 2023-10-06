@@ -52,6 +52,8 @@ namespace l1t {
     inline const int hwQual() const { return m_regional.hwQual(); };
     inline const int hwHF() const { return m_regional.hwHF(); };
     inline const int processor() const { return m_regional.processor(); };
+    inline const int hwKalmanRank() const { return m_regional.hwRank(); };
+    inline const int hwKalmanChi2() const { return m_regional.hwChi2(); };
     inline const tftype trackFinderType() const { return m_regional.trackFinderType(); };
     inline const int link() const { return m_regional.link(); }
 

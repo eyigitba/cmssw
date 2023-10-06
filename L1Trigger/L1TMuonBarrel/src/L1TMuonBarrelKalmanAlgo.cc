@@ -112,6 +112,8 @@ l1t::RegionalMuonCand L1TMuonBarrelKalmanAlgo::convertToBMTF(const L1MuKBMTrack&
   muon.setHwHF(HF);
   muon.setHwPtUnconstrained(pt2);
   muon.setHwDXY(dxy);
+  muon.setHwRank(rank(track));
+  muon.setHwChi2(track.approxChi2());
 
   //nw the words!
   uint32_t word1 = pt;

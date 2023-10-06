@@ -124,6 +124,8 @@ namespace L1Analysis {
       muonQual.clear();
       muonDxy.clear();
       muonTfMuonIdx.clear();
+      muonKalmanRank.clear();
+      muonKalmanChi2.clear();
       muonBx.clear();
 
       nMuonShowers = 0;
@@ -217,6 +219,8 @@ namespace L1Analysis {
     std::vector<unsigned short int> muonQual;
     std::vector<unsigned short int> muonDxy;
     std::vector<unsigned short int> muonTfMuonIdx;
+    std::vector<unsigned short int> muonKalmanRank;
+    std::vector<unsigned short int> muonKalmanChi2;
     std::vector<short int> muonBx;
 
     unsigned short int nMuonShowers;

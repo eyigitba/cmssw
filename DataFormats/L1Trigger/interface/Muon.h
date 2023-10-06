@@ -42,6 +42,8 @@ namespace l1t {
          double etaAtVtx = 0.,
          double phiAtVtx = 0.,
          int hwPtUnconstrained = 0,
+         int hwKalmanRank = 0,
+         int hwKalmanChi2 = 0,
          double ptUnconstrained = 0.,
          int dXY = 0);
 
@@ -65,6 +67,8 @@ namespace l1t {
          double etaAtVtx = 0.,
          double phiAtVtx = 0.,
          int hwPtUnconstrained = 0,
+         int hwKalmanRank = 0,
+         int hwKalmanChi2 = 0,
          double ptUnconstrained = 0.,
          int dXY = 0);
 
@@ -87,6 +91,8 @@ namespace l1t {
     inline void setHwRank(int rank) { hwRank_ = rank; };
 
     inline void setHwPtUnconstrained(int hwPtUnconstrained) { hwPtUnconstrained_ = hwPtUnconstrained; };
+    inline void setHwKalmanRank(int hwKalmanRank) { hwKalmanRank_ = hwKalmanRank; };
+    inline void setHwKalmanChi2(int hwKalmanChi2) { hwKalmanChi2_ = hwKalmanChi2; };
     inline void setPtUnconstrained(double ptUnconstrained) { ptUnconstrained_ = ptUnconstrained; };
     inline void setHwDXY(int hwDXY) { hwDXY_ = hwDXY; };
 
@@ -109,6 +115,8 @@ namespace l1t {
     inline int hwRank() const { return hwRank_; };
 
     inline int hwPtUnconstrained() const { return hwPtUnconstrained_; };
+    inline int hwKalmanRank() const { return hwKalmanRank_; };
+    inline int hwKalmanChi2() const { return hwKalmanChi2_; };
     inline double ptUnconstrained() const { return ptUnconstrained_; };
     inline int hwDXY() const { return hwDXY_; };
 
@@ -139,6 +147,9 @@ namespace l1t {
 
     // displacement information
     int hwPtUnconstrained_;
+    int hwKalmanRank_;
+    int hwKalmanChi2_;
+
     double ptUnconstrained_;
     int hwDXY_;
   };

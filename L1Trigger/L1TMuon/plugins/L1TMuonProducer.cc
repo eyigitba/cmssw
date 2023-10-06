@@ -363,6 +363,8 @@ void L1TMuonProducer::produce(edm::Event& iEvent, const edm::EventSetup& iSetup)
                 : (hwPtUnconstrained - 1));  // Don't want negative pT, unconstr. pT has LSB of 1 GeV.
         outMu.setHwPtUnconstrained(hwPtUnconstrained);
         outMu.setHwDXY(mu->hwDXY());
+        outMu.setHwKalmanRank(mu->hwKalmanRank());
+        outMu.setHwKalmanChi2(mu->hwKalmanChi2());
 
         if (mu->hwSignValid()) {
           outMu.setCharge(1 - 2 * mu->hwSign());
@@ -461,6 +463,9 @@ void L1TMuonProducer::addMuonsToCollections(MicroGMTConfiguration::InterMuonList
                                  : (hwPtUnconstrained - 1));  // Don't want negative pT, unconstr. pT has LSB of 1 GeV.
     outMu.setHwPtUnconstrained(hwPtUnconstrained);
     outMu.setHwDXY(mu->hwDXY());
+    outMu.setHwKalmanRank(mu->hwKalmanRank());
+    outMu.setHwKalmanChi2(mu->hwKalmanChi2());
+
 
     if (mu->hwSignValid()) {
       outMu.setCharge(1 - 2 * mu->hwSign());
