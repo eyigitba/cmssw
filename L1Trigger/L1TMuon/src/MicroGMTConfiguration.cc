@@ -35,7 +35,7 @@ int l1t::MicroGMTConfiguration::setOutputMuonQuality(int muQual, tftype type, in
     return 0xF;
   } else {
     // use only the two MSBs for the muon to the uGT
-    return muQual & 0xC;
+    return muQual;
   }
 }
 
