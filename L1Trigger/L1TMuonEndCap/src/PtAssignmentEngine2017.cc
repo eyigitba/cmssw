@@ -23,7 +23,16 @@ float PtAssignmentEngine2017::scale_pt(const float pt, const int mode) const {
   // TRG       = (1.2 + 0.015*TRG) * XML
   // TRG       = 1.2*XML / (1 - 0.015*XML)
   // TRG / XML = 1.2 / (1 - 0.015*XML)
-  if (ptLUTVersion_ >= 9) {  // LUTs with lower pT scale for 2023, deployed in May 2023
+  if(ptLUTVersion_ >= 10) {
+      if(mode >= 11 && mode != 12) {
+         pt_xml = fmin(20., pt);  // Maximum scale set by muons with XML pT = 20 GeV (scaled pT ~28 GeV)
+         pt_scale = 1.06 / (1 - 0.014 * pt_xml);
+      }else
+      {
+         pt_xml = fmin(20., pt);  // Maximum scale set by muons with XML pT = 20 GeV (scaled pT ~31 GeV)
+         pt_scale = 1.07 / (1 - 0.015 * pt_xml);
+      }
+  }else if (ptLUTVersion_ >= 9) { // LUTs with lower pT scale for 2023, deployed in May 2023
     pt_xml = fmin(20., pt);  // Maximum scale set by muons with XML pT = 20 GeV (scaled pT ~31 GeV)
     pt_scale = 1.07 / (1 - 0.015 * pt_xml);
   } else if (ptLUTVersion_ == 8) {  // First "physics" LUTs for 2022, will be deployed in June 2022
@@ -56,7 +65,7 @@ float PtAssignmentEngine2017::unscale_pt(const float pt, const int mode) const {
   return pt_unscale;
 }
 
-PtAssignmentEngine::address_t PtAssignmentEngine2017::calculate_address(const EMTFTrack& track) const {
+PtAssignmentEngine::address_t PtAssignmentEngine2017::calculate_address(const EMTFTrack& track, const int shower_bit) const {
   address_t address = 0;
 
   EMTFPtLUT data = track.PtLUT();
@@ -207,7 +216,8 @@ PtAssignmentEngine::address_t PtAssignmentEngine2017::calculate_address(const EM
     address |= (frA & ((1 << 1) - 1)) << (0 + 7 + 5 + 1 + 3);
     int bit = 0;
     if (mode != 7) {
-      address |= (frB & ((1 << 1) - 1)) << (0 + 7 + 5 + 1 + 3 + 1);
+      // address |= (frB & ((1 << 1) - 1)) << (0 + 7 + 5 + 1 + 3 + 1);
+      address |= (shower_bit & ((1 << 1) - 1)) << (0 + 7 + 5 + 1 + 3 + 1);
       bit = 1;
     }
     address |= (clctA & ((1 << 2) - 1)) << (0 + 7 + 5 + 1 + 3 + 1 + bit);
@@ -282,6 +292,7 @@ float PtAssignmentEngine2017::calculate_pt_xml(const address_t& address) const {
   int dPhiAB, dPhiBC = -1, dPhiCD = -1;
   int sPhiAB, sPhiBC = -1, sPhiCD = -1;
   int frA, frB = -1;
+  int shower_bit = -1;
   int clctA, clctB = -1;
   int rpcA, rpcB, rpcC, rpcD;
   int endcap = 1;
@@ -309,7 +320,7 @@ float PtAssignmentEngine2017::calculate_pt_xml(const address_t& address) const {
     frA = (address >> (0 + 7 + 5 + 1 + 3) & ((1 << 1) - 1));
     int bit = 0;
     if (mode != 7) {
-      frB = (address >> (0 + 7 + 5 + 1 + 3 + 1) & ((1 << 1) - 1));
+      shower_bit = (address >> (0 + 7 + 5 + 1 + 3 + 1) & ((1 << 1) - 1));
       bit = 1;
     }
     clctA = (address >> (0 + 7 + 5 + 1 + 3 + 1 + bit) & ((1 << 2) - 1));
@@ -443,11 +454,11 @@ float PtAssignmentEngine2017::calculate_pt_xml(const address_t& address) const {
     predictors.insert(predictors.end(), tmp, tmp + 10);
   } else if (nHits == 3) {
     if (mode == 14)
-      predictors = {theta, St1_ring2, dPhiAB, dPhiBC, dPhiAB + dPhiBC, frA, frB, clctA, dTheta, rpcA, rpcB, rpcC};
+      predictors = {theta, St1_ring2, dPhiAB, dPhiBC, dPhiAB + dPhiBC, frA, shower_bit, clctA, dTheta, rpcA, rpcB, rpcC};
     else if (mode == 13)
-      predictors = {theta, St1_ring2, dPhiAB, dPhiAB + dPhiBC, dPhiBC, frA, frB, clctA, dTheta, rpcA, rpcB, rpcC};
+      predictors = {theta, St1_ring2, dPhiAB, dPhiAB + dPhiBC, dPhiBC, frA, shower_bit, clctA, dTheta, rpcA, rpcB, rpcC};
     else if (mode == 11)
-      predictors = {theta, St1_ring2, dPhiBC, dPhiAB, dPhiAB + dPhiBC, frA, frB, clctA, dTheta, rpcA, rpcB, rpcC};
+      predictors = {theta, St1_ring2, dPhiBC, dPhiAB, dPhiAB + dPhiBC, frA, shower_bit, clctA, dTheta, rpcA, rpcB, rpcC};
     else if (mode == 7)
       predictors = {theta, dPhiAB, dPhiBC, dPhiAB + dPhiBC, frA, clctA, dTheta, rpcA, rpcB, rpcC};
   } else if (nHits == 2 && mode >= 8) {
@@ -483,7 +494,7 @@ float PtAssignmentEngine2017::calculate_pt_xml(const address_t& address) const {
 }  // End function: float PtAssignmentEngine2017::calculate_pt_xml(const address_t& address)
 
 // Calculate XML pT directly from track quantities, without forming an address
-float PtAssignmentEngine2017::calculate_pt_xml(const EMTFTrack& track) const {
+float PtAssignmentEngine2017::calculate_pt_xml(const EMTFTrack& track, const int shower_bit) const {
   float pt_xml = 0.;
 
   EMTFPtLUT data = track.PtLUT();
@@ -625,13 +636,16 @@ float PtAssignmentEngine2017::calculate_pt_xml(const EMTFTrack& track) const {
                     dPhiSum4, dPhiSum4A, dPhiSum3, dPhiSum3A, outStPhi, dTh_14,  RPC_1,   RPC_2,   RPC_3, RPC_4};
       break;
     case 14:  // 1-2-3
-      predictors = {theta, St1_ring2, dPhi_12, dPhi_23, dPhi_13, FR_1, FR_2, bend_1, dTh_13, RPC_1, RPC_2, RPC_3};
+      predictors = {theta, St1_ring2, dPhi_12, dPhi_23, dPhi_13, FR_1, shower_bit, bend_1, dTh_13, RPC_1, RPC_2, RPC_3};
+      // predictors = {theta, St1_ring2, dPhi_12, dPhi_23, dPhi_13, FR_1, FR_2, bend_1, dTh_13, RPC_1, RPC_2, RPC_3};
       break;
     case 13:  // 1-2-4
-      predictors = {theta, St1_ring2, dPhi_12, dPhi_14, dPhi_24, FR_1, FR_2, bend_1, dTh_14, RPC_1, RPC_2, RPC_4};
+      predictors = {theta, St1_ring2, dPhi_12, dPhi_14, dPhi_24, FR_1, shower_bit, bend_1, dTh_14, RPC_1, RPC_2, RPC_4};
+      // predictors = {theta, St1_ring2, dPhi_12, dPhi_14, dPhi_24, FR_1, FR_2, bend_1, dTh_14, RPC_1, RPC_2, RPC_4};
       break;
     case 11:  // 1-3-4
-      predictors = {theta, St1_ring2, dPhi_34, dPhi_13, dPhi_14, FR_1, FR_3, bend_1, dTh_14, RPC_1, RPC_3, RPC_4};
+      predictors = {theta, St1_ring2, dPhi_34, dPhi_13, dPhi_14, FR_1, shower_bit, bend_1, dTh_14, RPC_1, RPC_3, RPC_4};
+      // predictors = {theta, St1_ring2, dPhi_34, dPhi_13, dPhi_14, FR_1, FR_3, bend_1, dTh_14, RPC_1, RPC_3, RPC_4};
       break;
     case 7:  // 2-3-4
       predictors = {theta, dPhi_23, dPhi_34, dPhi_24, FR_2, bend_2, dTh_24, RPC_2, RPC_3, RPC_4};

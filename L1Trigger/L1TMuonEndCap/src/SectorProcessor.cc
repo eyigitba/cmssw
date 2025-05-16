@@ -17,6 +17,7 @@ void SectorProcessor::configure(const EMTFSetup* setup, int verbose, int endcap,
 
 void SectorProcessor::process(const edm::EventID& event_id,
                               const TriggerPrimitiveCollection& muon_primitives,
+			      const CSCShowerDigiCollection& shower_primitives,
                               EMTFHitCollection& out_hits,
                               EMTFTrackCollection& out_tracks) const {
   auto cfg = setup_->getVersionControl();
@@ -43,7 +44,7 @@ void SectorProcessor::process(const edm::EventID& event_id,
     }
 
     process_single_bx(
-        bx, muon_primitives, out_hits, out_tracks, extended_conv_hits, extended_best_track_cands, patt_lifetime_map);
+        bx, muon_primitives, shower_primitives, out_hits, out_tracks, extended_conv_hits, extended_best_track_cands, patt_lifetime_map);
 
     // Drop earliest BX outside of BX window
     if (bx >= cfg.minBX_ + delayBX) {
@@ -60,6 +61,7 @@ void SectorProcessor::process(const edm::EventID& event_id,
 
 void SectorProcessor::process_single_bx(int bx,
                                         const TriggerPrimitiveCollection& muon_primitives,
+					const CSCShowerDigiCollection& shower_primitives,
                                         EMTFHitCollection& out_hits,
                                         EMTFTrackCollection& out_tracks,
                                         std::deque<EMTFHitCollection>& extended_conv_hits,
@@ -251,7 +253,7 @@ void SectorProcessor::process_single_bx(int bx,
 
   // Construct pT address, assign pT, calculate other GMT quantities
   // From src/PtAssignment.cc
-  pt_assign.process(best_tracks);
+  pt_assign.process(best_tracks, shower_primitives);
 
   // ___________________________________________________________________________
   // Output

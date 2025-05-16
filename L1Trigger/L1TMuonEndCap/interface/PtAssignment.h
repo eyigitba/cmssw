@@ -2,6 +2,7 @@
 #define L1TMuonEndCap_PtAssignment_h
 
 #include "L1Trigger/L1TMuonEndCap/interface/Common.h"
+#include "DataFormats/CSCDigi/interface/CSCShowerDigiCollection.h"
 
 class PtAssignmentEngine;
 class PtAssignmentEngineDxy;
@@ -25,7 +26,7 @@ public:
                  int modeQualVer,
                  std::string pbFileName);
 
-  void process(EMTFTrackCollection& best_tracks);
+  void process(EMTFTrackCollection& best_tracks, const CSCShowerDigiCollection& shower_primitives);
 
   const PtAssignmentEngineAux& aux() const;
 

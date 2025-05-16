@@ -38,13 +38,14 @@ public:
   virtual float unscale_pt(const float pt, const int mode = 15) const = 0;
 
   virtual address_t calculate_address(const EMTFTrack& track) const { return 0; }
+  virtual address_t calculate_address(const EMTFTrack& track, const int shower_bit) const { return 0; }
 
   virtual float calculate_pt(const address_t& address) const;
-  virtual float calculate_pt(const EMTFTrack& track) const;
+  virtual float calculate_pt(const EMTFTrack& track, const int shower_bit) const;
 
   virtual float calculate_pt_lut(const address_t& address) const;
   virtual float calculate_pt_xml(const address_t& address) const { return 0.; }
-  virtual float calculate_pt_xml(const EMTFTrack& track) const { return 0.; }
+  virtual float calculate_pt_xml(const EMTFTrack& track, const int shower_bit) const { return 0.; }
 
 protected:
   std::vector<int> allowedModes_;

@@ -16,7 +16,8 @@ TrackFinder::TrackFinder(const edm::ParameterSet& iConfig, edm::ConsumesCollecto
       tokenCPPF_(iConsumes.consumes<emtf::CPPFTag::digi_collection>(iConfig.getParameter<edm::InputTag>("CPPFInput"))),
       tokenGEM_(iConsumes.consumes<emtf::GEMTag::digi_collection>(iConfig.getParameter<edm::InputTag>("GEMInput"))),
       tokenME0_(iConsumes.consumes<emtf::ME0Tag::digi_collection>(iConfig.getParameter<edm::InputTag>("ME0Input"))),
-      verbose_(iConfig.getUntrackedParameter<int>("verbosity")) {}
+      tokenCSCShower_(iConsumes.consumes<CSCShowerDigiCollection>(iConfig.getParameter<edm::InputTag>("CSCShowerInput"))),
+      verbose_(iConfig.getUntrackedParameter<int>("verbosity")) {loadOnce_ = true;}
 
 TrackFinder::~TrackFinder() {}
 
@@ -29,7 +30,11 @@ void TrackFinder::process(const edm::Event& iEvent,
   out_tracks.clear();
 
   // Check and update geometry, conditions, versions, sp LUTs, and pt assignment engine
-  setup_.reload(iEvent, iSetup);
+  if(loadOnce_) {
+      setup_.reload(iEvent, iSetup);
+      loadOnce_ = false;
+      std::cout << "LOADED ONCE" << std::endl;
+  }
 
   auto tp_geom_ = &(setup_.getGeometryTranslator());
 
@@ -83,6 +88,10 @@ void TrackFinder::process(const edm::Event& iEvent,
     collector.extractPrimitives(emtf::DTTag(), tp_geom_, iEvent, tokenDTPhi_, tokenDTTheta_, muon_primitives);
   }
 
+  edm::Handle<CSCShowerDigiCollection> showersH;
+  iEvent.getByToken(tokenCSCShower_, showersH);
+  const CSCShowerDigiCollection& showers_primitives = *showersH.product();
+
   // Check trigger primitives. The printout is really verbose.
   if (verbose_ > 2) {  // debug
     std::cout << "Num of TriggerPrimitive: " << muon_primitives.size() << std::endl;
@@ -100,7 +109,7 @@ void TrackFinder::process(const edm::Event& iEvent,
                      (sector - emtf::MIN_TRIGSECTOR);
 
       sector_processors_.at(es).configure(&setup_, verbose_, endcap, sector);
-      sector_processors_.at(es).process(iEvent.id(), muon_primitives, out_hits, out_tracks);
+      sector_processors_.at(es).process(iEvent.id(), muon_primitives, showers_primitives, out_hits, out_tracks);
     }
   }
 

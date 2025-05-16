@@ -40,8 +40,10 @@ private:
   const edm::EDGetToken tokenCPPF_;
   const edm::EDGetToken tokenGEM_;
   const edm::EDGetToken tokenME0_;
+  const edm::EDGetToken tokenCSCShower_;
 
   int verbose_;
+  bool loadOnce_;
 };
 
 #endif

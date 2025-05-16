@@ -13,6 +13,9 @@ simEmtfDigisMC = cms.EDProducer("L1TMuonEndCapTrackProducer",
     # Verbosity level
     verbosity = cms.untracked.int32(0),
 
+    xmlLutVersion = cms.string('v4p0'),
+    useCustomLUTs = cms.bool(True),
+
     # Configure by firmware version, which may be different than the default parameters in this file
     FWConfig = cms.bool(True),
 
@@ -36,6 +39,7 @@ simEmtfDigisMC = cms.EDProducer("L1TMuonEndCapTrackProducer",
     CPPFInput = cms.InputTag('simCPPFDigis'),  ## Cannot use in MC workflow, does not exist yet.  CPPFEnable set to False - AWB 01.06.18
     GEMInput = cms.InputTag('simMuonGEMPadDigiClusters'),
     ME0Input = cms.InputTag('me0TriggerConvertedPseudoDigis'),
+    CSCShowerInput = cms.InputTag('simCscTriggerPrimitiveDigis'),
 
     # Run with CSC, RPC, GEM
     DTEnable = cms.bool(False),
@@ -135,6 +139,7 @@ simEmtfDigisData = simEmtfDigisMC.clone(
     DTPhiInput = cms.InputTag('bmtfDigis'),
     DTThetaInput = cms.InputTag('bmtfDigis'),
     CSCInput = cms.InputTag('emtfStage2Digis'),
+    CSCShowerInput = cms.InputTag('emtfStage2Digis'),
     CSCComparatorInput = cms.InputTag('muonCSCDigis','MuonCSCComparatorDigi'),
     RPCInput = cms.InputTag('muonRPCDigis'),
     CPPFInput = cms.InputTag('emtfStage2Digis'),

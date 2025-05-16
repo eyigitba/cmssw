@@ -3,6 +3,8 @@
 #include "L1Trigger/L1TMuonEndCap/interface/PtAssignmentEngine.h"
 #include "L1Trigger/L1TMuonEndCap/interface/PtAssignmentEngineDxy.h"
 
+#include "DataFormats/CSCDigi/interface/CSCConstants.h"
+
 void PtAssignment::configure(PtAssignmentEngine* pt_assign_engine,
                              PtAssignmentEngineDxy* pt_assign_engine_dxy,
                              int verbose,
@@ -39,7 +41,7 @@ void PtAssignment::configure(PtAssignmentEngine* pt_assign_engine,
   modeQualVer_ = modeQualVer;
 }
 
-void PtAssignment::process(EMTFTrackCollection& best_tracks) {
+void PtAssignment::process(EMTFTrackCollection& best_tracks,  const CSCShowerDigiCollection& shower_primitives) {
   using address_t = PtAssignmentEngine::address_t;
 
   EMTFTrackCollection::iterator best_tracks_it = best_tracks.begin();
@@ -56,6 +58,54 @@ void PtAssignment::process(EMTFTrackCollection& best_tracks) {
     }
 
     int gmt_eta = aux().getGMTEta(track.Theta_fp(), track.Endcap());  // Convert to integer eta using FW LUT
+
+    // JPR MATCH SHOWER TO HITS IN TRACK COUNT
+    int n_Loose_showers = 0;
+    int n_Nominal_showers = 0;
+    int n_Tight_showers = 0;
+
+    auto shower_digi_chamber = shower_primitives.begin();
+    auto shower_chend = shower_primitives.end();
+
+    for (; shower_digi_chamber != shower_chend; ++shower_digi_chamber) {
+        auto digi = (*shower_digi_chamber).second.first;
+        auto dend = (*shower_digi_chamber).second.second;
+        for (; digi != dend; ++digi) {
+            int selected_shower = -1;
+            int shower_endcap = (*shower_digi_chamber).first.endcap();
+            int shower_sector = (*shower_digi_chamber).first.triggerSector();
+            int shower_station = (*shower_digi_chamber).first.station();
+            int shower_chamber = (*shower_digi_chamber).first.chamber();
+           int shower_ring = (*shower_digi_chamber).first.ring();
+            int shower_DetID = (*digi).getCSCID();
+
+            int shower_subsector = (shower_station != 1) ? 0 : ((shower_chamber % 6 > 2) ? 1 : 2);
+
+
+            if (shower_station == 1) {  // ME1: 0 - 8, 9 - 17
+                selected_shower = (shower_subsector - 1) * 9 + (shower_DetID - 1);
+            } else {  // ME2,3,4: 18 - 26, 27 - 35, 36 - 44
+                selected_shower = (shower_station) * 9 + (shower_DetID - 1);
+            }
+            if (selected_shower >= 0) {
+                // 18 in ME1; 9x3 in ME2,3,4
+                emtf_assert(selected_shower < CSCConstants::MAX_CSCS_PER_EMTF_SP_NO_OVERLAP);
+                for (const auto& hit : track.Hits()) {
+                    if(!hit.Is_CSC()){ continue; }
+                    if(shower_ring == hit.Ring() && shower_endcap == hit.Endcap() && shower_sector == hit.Sector() && shower_station == hit.Station() && shower_chamber == hit.Chamber())
+                    {
+                        if((*digi).isLooseInTime()){n_Loose_showers++;}
+                        if((*digi).isNominalInTime()){n_Nominal_showers++;}
+                        if((*digi).isTightInTime()){n_Tight_showers++;}
+                    }
+                }
+           }
+       }
+    }
+
+    const int shower_bit = (n_Loose_showers >= 1);
+
+
 
     // Notes from Alex (2016-09-28):
     //
@@ -81,23 +131,27 @@ void PtAssignment::process(EMTFTrackCollection& best_tracks) {
     int gmt_dxy = 0;
 
     if (track.Mode() != 1) {
-      address = pt_assign_engine_->calculate_address(track);
+      address = pt_assign_engine_->calculate_address(track, shower_bit);
       xmlpt = pt_assign_engine_->calculate_pt(address);
 
       // Check address packing / unpacking using PtAssignmentEngine2017::calculate_pt_xml(const EMTFTrack& track)
       if (pt_assign_engine_->get_pt_lut_version() > 5 &&
-          not(fabs(xmlpt - pt_assign_engine_->calculate_pt(track)) < 0.001)) {
+          not(fabs(xmlpt - pt_assign_engine_->calculate_pt(track, shower_bit)) < 0.001)) {
         edm::LogError("L1T") << "EMTF pT assignment mismatch: xmlpt = " << xmlpt
                              << ", pt_assign_engine_->calculate_pt(track)) = "
-                             << pt_assign_engine_->calculate_pt(track);
+                             << pt_assign_engine_->calculate_pt(track, shower_bit);
       }
 
       pt = (xmlpt < 0.) ? 1. : xmlpt;  // Matt used fabs(-1) when mode is invalid
       pt *= pt_assign_engine_->scale_pt(
           pt, track.Mode());  // Multiply by some factor to achieve 90% efficiency at threshold
 
+      if(n_Nominal_showers >= 1 || n_Loose_showers >= 2){
+          pt = 255; // RANDOMLY CHOSEN AT 100GeV
+      }
+
       gmt_pt = aux().getGMTPt(pt);  // Encode integer pT in GMT format
-    }  // End if (track.Mode() != 1)
+    }                               // End if (track.Mode() != 1)
     else {
       gmt_pt = 10 - (abs(gmt_eta) / 32);
     }

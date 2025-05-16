@@ -19,6 +19,7 @@
 #include "L1Trigger/L1TMuonEndCap/interface/BestTrackSelection.h"
 #include "L1Trigger/L1TMuonEndCap/interface/PtAssignment.h"
 #include "L1Trigger/L1TMuonEndCap/interface/SingleHitTrack.h"
+#include "DataFormats/CSCDigi/interface/CSCShowerDigiCollection.h"
 
 class SectorProcessor {
 public:
@@ -33,6 +34,7 @@ public:
       // Input
       const edm::EventID& event_id,
       const TriggerPrimitiveCollection& muon_primitives,
+      const CSCShowerDigiCollection& shower_primitives,
       // Output
       EMTFHitCollection& out_hits,
       EMTFTrackCollection& out_tracks) const;
@@ -41,6 +43,7 @@ public:
       // Input
       int bx,
       const TriggerPrimitiveCollection& muon_primitives,
+      const CSCShowerDigiCollection& shower_primitives,
       // Output
       EMTFHitCollection& out_hits,
       EMTFTrackCollection& out_tracks,

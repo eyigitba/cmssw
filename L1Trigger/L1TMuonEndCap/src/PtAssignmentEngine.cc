@@ -21,6 +21,8 @@ void PtAssignmentEngine::read(int pt_lut_version, const std::string& xml_dir) {
   std::cout << xml_dir_full << std::endl;
   std::cout << "Non-standard operation; if it fails, now you know why" << std::endl;
 
+  ptLUTVersion_ = 10;
+
   for (unsigned i = 0; i < allowedModes_.size(); ++i) {
     int mode = allowedModes_.at(i);  // For 2016, maps to "mode_inv"
     std::stringstream ss;
@@ -109,10 +111,10 @@ float PtAssignmentEngine::calculate_pt(const address_t& address) const {
   return pt;
 }
 
-float PtAssignmentEngine::calculate_pt(const EMTFTrack& track) const {
+float PtAssignmentEngine::calculate_pt(const EMTFTrack& track, const int shower_bit) const {
   float pt = 0.;
 
-  pt = calculate_pt_xml(track);
+  pt = calculate_pt_xml(track, shower_bit);
 
   return pt;
 }
