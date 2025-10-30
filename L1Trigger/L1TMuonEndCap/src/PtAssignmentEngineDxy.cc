@@ -107,37 +107,69 @@ void PtAssignmentEngineDxy::preprocessing_dxy(const EMTFTrack& track, emtf::Feat
     x_dphi[0] = 0;
     x_dphi[1] = 0;
     x_dphi[2] = 0;
+    x_dphi_sign[0] = 0;
+    x_dphi_sign[1] = 0;
+    x_dphi_sign[2] = 0;
+
 
     x_dtheta[0] = 0;
     x_dtheta[1] = 0;
     x_dtheta[2] = 0;
+    x_dtheta_sign[0] = 0;
+    x_dtheta_sign[1] = 0;
+    x_dtheta_sign[2] = 0;
+
   }
   if (!st2) {
     x_dphi[0] = 0;
     x_dphi[3] = 0;
     x_dphi[4] = 0;
+    x_dphi_sign[0] = 0;
+    x_dphi_sign[3] = 0;
+    x_dphi_sign[4] = 0;
+
 
     x_dtheta[0] = 0;
     x_dtheta[3] = 0;
     x_dtheta[4] = 0;
+    x_dtheta_sign[0] = 0;
+    x_dtheta_sign[3] = 0;
+    x_dtheta_sign[4] = 0;
+
   }
   if (!st3) {
     x_dphi[1] = 0;
     x_dphi[3] = 0;
     x_dphi[5] = 0;
+    x_dphi_sign[1] = 0;
+    x_dphi_sign[3] = 0;
+    x_dphi_sign[5] = 0;
+
 
     x_dtheta[1] = 0;
     x_dtheta[3] = 0;
     x_dtheta[5] = 0;
+    x_dtheta_sign[1] = 0;
+    x_dtheta_sign[3] = 0;
+    x_dtheta_sign[5] = 0;
+
   }
   if (!st4) {
     x_dphi[2] = 0;
     x_dphi[4] = 0;
     x_dphi[5] = 0;
+    x_dphi_sign[2] = 0;
+    x_dphi_sign[4] = 0;
+    x_dphi_sign[5] = 0;
+
 
     x_dtheta[2] = 0;
     x_dtheta[4] = 0;
     x_dtheta[5] = 0;
+    x_dtheta_sign[2] = 0;
+    x_dtheta_sign[4] = 0;
+    x_dtheta_sign[5] = 0;
+
   }
 
   x_trk_theta[0] = track.Theta_fp();
