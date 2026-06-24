@@ -921,6 +921,9 @@ MINIAODSIMEventContent= cms.PSet(
 MINIAODSIMEventContent.outputCommands.extend(MicroEventContentMC.outputCommands)
 MINIAODSIMEventContent.outputCommands.extend(HLTriggerMINIAOD.outputCommands)
 
+from Configuration.ProcessModifiers.phase2_l1scout_cff import phase2_l1scout
+phase2_l1scout.toModify(MINIAODSIMEventContent, outputCommands = L1TriggerPhase2L1Scout.outputCommands)
+
 MINIGENEventContent= cms.PSet(
     outputCommands = cms.untracked.vstring('drop *'),
     eventAutoFlushCompressedSize=cms.untracked.int32(15*1024*1024),
